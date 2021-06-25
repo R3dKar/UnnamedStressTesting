@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace UnnamedStressTesting
@@ -24,7 +25,18 @@ namespace UnnamedStressTesting
         public FileDictionary(string filename)
         {
             FilePath = filename;
-            Words = FileHelpers.GetWords(FilePath).Select(item => new Word(item)).ToList();
+            
+            var stringWords = FileHelpers.GetWords(filename);
+            Words = new List<Word>();
+
+            foreach (var stringWord in stringWords)
+            {
+                try
+                {
+                    Words.Add(new Word(stringWord));
+                }
+                catch (ArgumentException) { }
+            }
         }
     }
 }

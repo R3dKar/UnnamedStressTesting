@@ -63,6 +63,8 @@ namespace UnnamedStressTesting
         /// </summary>
         public WordListViewModel()
         {
+            WordViewModel.HostViewModel = this;
+
             OpenDictionaryFolderCommand = new RelayCommand(OpenDictionaryFolder);
             RefreshWordCommand = new RelayCommand(UpdateDictionaries);
 

@@ -2,6 +2,7 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace UnnamedStressTesting
 {
@@ -39,7 +40,7 @@ namespace UnnamedStressTesting
             string path = Path.Combine(DictironaryFolderPath, dictionary);
 
             return File.ReadAllText(path).Split(new char[] { '\n' })
-                .Select(item => item.Replace("\r", "").Replace(" ", ""))
+                .Select(item => Regex.Replace(item.Replace("\r", ""), @"\s+", " "))
                 .Where(item => !string.IsNullOrWhiteSpace(item)).ToList();
         }
 

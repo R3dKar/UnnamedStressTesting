@@ -15,18 +15,25 @@ namespace UnnamedStressTesting
         public static List<WordViewModel> EnabledWords = new List<WordViewModel>();
 
         /// <summary>
+        /// Исходный объект <see cref="UnnamedStressTesting.Word"/>
+        /// </summary>
+        public Word Word { get; set; }
+
+        /// <summary>
         /// Список букв
         /// </summary>
         public ObservableCollection<LetterViewModel> Letters { get; set; }
+
         /// <summary>
         /// Индекс буквы под ударением
         /// </summary>
-        public int StressIndex { get; set; } = -1;
+        public int StressIndex { get => Word.StressIndex; }
 
         /// <summary>
         /// Является ли группой для слов или нет
         /// </summary>
-        public bool IsTreeViewGroup { get; set; }
+        public bool IsTreeViewGroup { get => Word is null; }
+
         private ObservableCollection<WordViewModel> items;
         /// <summary>
         /// Возвращает список слов, если <see cref="IsTreeViewGroup"/> равно true
@@ -49,7 +56,15 @@ namespace UnnamedStressTesting
             }
         }
 
+        /// <summary>
+        /// Элемет, стоящий по дереву выше
+        /// </summary>
         public WordViewModel Parent { get; set; }
+
+        /// <summary>
+        /// ViewModel окна
+        /// </summary>
+        public static WordListViewModel HostViewModel;
 
         private string preview;
         /// <summary>
@@ -99,12 +114,10 @@ namespace UnnamedStressTesting
                         }
                     }
 
-                    return isAny; 
+                    enabled = isAny;
                 }
-                else
-                {
-                    return enabled;
-                }
+
+                return enabled;
             }
             set
             {
@@ -112,10 +125,10 @@ namespace UnnamedStressTesting
                     return;
 
                 enabled = value;
-                
+
                 if (IsTreeViewGroup && Items != null)
                 {
-                    foreach(var item in Items)
+                    foreach (var item in Items)
                     {
                         item.Enabled = value;
                     }
@@ -127,8 +140,9 @@ namespace UnnamedStressTesting
                     else
                         EnabledWords.Remove(this);
 
+                    Word.Enabled = value;
 
-                    Parent.OnPropertyChanged(nameof(Enabled));
+                    Parent?.OnPropertyChanged(nameof(Enabled));
                     OnPropertyChanged(nameof(Enabled));
                 }
             }
@@ -140,11 +154,15 @@ namespace UnnamedStressTesting
         /// <param name="word">Исходный экземпляр слова</param>
         public WordViewModel(Word word)
         {
-            IsTreeViewGroup = false;
+            Word = word;
+            Enabled = word.Enabled;
+
+            if (Enabled)
+                EnabledWords.Add(this);
 
             Letters = new ObservableCollection<LetterViewModel>();
-            StressIndex = word.StressIndex;
-            foreach (var letter in word.Letters)
+
+            foreach (var letter in Word.Letters)
             {
                 Letters.Add(new LetterViewModel(letter));
             }
@@ -156,17 +174,15 @@ namespace UnnamedStressTesting
         /// <param name="dictionary">Словарь слов</param>
         public WordViewModel(FileDictionary dictionary)
         {
-            IsTreeViewGroup = true;
-            Preview = Path.GetFileName(dictionary.FilePath).Replace(".txt","");
+            Preview = Path.GetFileName(dictionary.FilePath).Replace(".txt", "");
             Items = new ObservableCollection<WordViewModel>();
+
             foreach (var word in dictionary.Words)
             {
                 var w = new WordViewModel(word);
                 w.Parent = this;
                 Items.Add(w);
             }
-            Enabled = true;
-            EnabledWords.Add(this);
         }
     }
 }
