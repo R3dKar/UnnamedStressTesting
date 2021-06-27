@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace UnnamedStressTesting
 {
@@ -9,6 +8,8 @@ namespace UnnamedStressTesting
     /// </summary>
     public class FileDictionary
     {
+        #region Открытые свойства
+
         /// <summary>
         /// Путь к файлу словарю
         /// </summary>
@@ -18,6 +19,10 @@ namespace UnnamedStressTesting
         /// </summary>
         public List<Word> Words { get; set; }
 
+        #endregion
+
+        #region Конструкторы
+
         /// <summary>
         /// Конструктор словаря
         /// </summary>
@@ -25,7 +30,7 @@ namespace UnnamedStressTesting
         public FileDictionary(string filename)
         {
             FilePath = filename;
-            
+
             var stringWords = FileHelpers.GetWords(filename);
             Words = new List<Word>();
 
@@ -38,5 +43,7 @@ namespace UnnamedStressTesting
                 catch (ArgumentException) { }
             }
         }
+
+        #endregion
     }
 }

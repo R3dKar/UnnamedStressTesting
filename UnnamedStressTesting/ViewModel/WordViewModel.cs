@@ -9,10 +9,16 @@ namespace UnnamedStressTesting
     /// </summary>
     public class WordViewModel : BaseViewModel
     {
+        #region Статические члены
+
         /// <summary>
         /// Список слов, выбранные в систему тестирования
         /// </summary>
-        public static List<WordViewModel> EnabledWords = new List<WordViewModel>();
+        public static List<WordViewModel> EnabledWords { get; private set; } = new List<WordViewModel>();
+
+        #endregion
+
+        #region Открытые свойства
 
         /// <summary>
         /// Исходный объект <see cref="UnnamedStressTesting.Word"/>
@@ -28,6 +34,11 @@ namespace UnnamedStressTesting
         /// Индекс буквы под ударением
         /// </summary>
         public int StressIndex { get => Word.StressIndex; }
+
+        /// <summary>
+        /// Коментарий к слову
+        /// </summary>
+        public string Comment { get => IsTreeViewGroup ? null : Word.Comment; }
 
         /// <summary>
         /// Является ли группой для слов или нет
@@ -60,11 +71,6 @@ namespace UnnamedStressTesting
         /// Элемет, стоящий по дереву выше
         /// </summary>
         public WordViewModel Parent { get; set; }
-
-        /// <summary>
-        /// ViewModel окна
-        /// </summary>
-        public static WordListViewModel HostViewModel;
 
         private string preview;
         /// <summary>
@@ -148,6 +154,10 @@ namespace UnnamedStressTesting
             }
         }
 
+        #endregion
+
+        #region Конструкторы
+
         /// <summary>
         /// Конструктор для слова
         /// </summary>
@@ -156,9 +166,6 @@ namespace UnnamedStressTesting
         {
             Word = word;
             Enabled = word.Enabled;
-
-            if (Enabled)
-                EnabledWords.Add(this);
 
             Letters = new ObservableCollection<LetterViewModel>();
 
@@ -184,5 +191,7 @@ namespace UnnamedStressTesting
                 Items.Add(w);
             }
         }
+
+        #endregion
     }
 }

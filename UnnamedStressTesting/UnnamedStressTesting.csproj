@@ -38,6 +38,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FontAwesome5, Version=2.1.2.0, Culture=neutral, PublicKeyToken=9cfaf01297a008f8, processorArchitecture=MSIL">
+      <HintPath>..\packages\FontAwesome5.2.1.2\lib\net472\FontAwesome5.dll</HintPath>
+    </Reference>
+    <Reference Include="FontAwesome5.Net, Version=2.1.2.0, Culture=neutral, PublicKeyToken=9cfaf01297a008f8, processorArchitecture=MSIL">
+      <HintPath>..\packages\FontAwesome5.2.1.2\lib\net472\FontAwesome5.Net.dll</HintPath>
+    </Reference>
     <Reference Include="PropertyChanged, Version=3.4.0.0, Culture=neutral, PublicKeyToken=ee3ee20bcf148ddd, processorArchitecture=MSIL">
       <HintPath>..\packages\PropertyChanged.Fody.3.4.0\lib\net40\PropertyChanged.dll</HintPath>
     </Reference>
@@ -63,6 +69,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converters\BaseValueConverter.cs" />
+    <Compile Include="Converters\ItemsToIsExpandedConverter.cs" />
     <Compile Include="DataModels\FileDictionary.cs" />
     <Compile Include="DataModels\Letter.cs" />
     <Compile Include="DataModels\Word.cs" />

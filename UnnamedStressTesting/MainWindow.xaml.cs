@@ -23,9 +23,11 @@ namespace UnnamedStressTesting
         public MainWindow()
         {
             InitializeComponent();
+
+            Closed += (DataContext as WordListViewModel).SaveDictionariesOnClose;
         }
 
-        // костыль (или нет :thinking:)
+        // костыль (или нет?? :thinking:)
         private void WordsTreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             (DataContext as WordListViewModel).SelectedItem = (WordViewModel)(sender as TreeView).SelectedItem;

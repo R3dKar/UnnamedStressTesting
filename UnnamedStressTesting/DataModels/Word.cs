@@ -8,6 +8,8 @@ namespace UnnamedStressTesting
     /// </summary>
     public class Word
     {
+        #region Открытые свойства
+
         /// <summary>
         /// Список букв слова
         /// </summary>
@@ -22,6 +24,15 @@ namespace UnnamedStressTesting
         /// Включено ли слово в систему тестирования
         /// </summary>
         public bool Enabled { get; set; } = true;
+
+        /// <summary>
+        /// Коментарий к слову
+        /// </summary>
+        public string Comment { get; set; } = null;
+
+        #endregion
+
+        #region Конструкторы
 
         /// <summary>
         /// Конструктор объекта слова из строки
@@ -41,15 +52,27 @@ namespace UnnamedStressTesting
                 switch (part)
                 {
                     case "+":
-                        Enabled = true;
+                        if (!string.IsNullOrEmpty(Comment))
+                            Comment += " +";
+                        else
+                            Enabled = true;
                         break;
                     case "-":
-                        Enabled = false;
+                        if (!string.IsNullOrEmpty(Comment))
+                            Comment += " -";
+                        else
+                            Enabled = false;
                         break;
                     default:
                         if (Letters != null)
+                        {
+                            if (Comment is null)
+                                Comment = part;
+                            else
+                                Comment += " " + part;
                             break;
-                        
+                        }
+
                         Letters = new List<Letter>(parts[0].Length);
 
                         foreach (char ch in parts[0])
@@ -76,5 +99,36 @@ namespace UnnamedStressTesting
             if (StressIndex == -1)
                 throw new ArgumentException("Слово без ударения", nameof(word));
         }
+
+        #endregion
+        
+        #region Вспомогательные методы
+
+        /// <summary>
+        /// Возвращает строку, характеризующую экземпляр класса
+        /// </summary>
+        /// <param name="serialize">Если true, то выдаёт строку готовую к записи в файл</param>
+        /// <returns>Строка типа <see cref="string"/></returns>
+        public string ToString(bool serialize)
+        {
+            string word = string.Empty;
+
+            foreach (var letter in Letters)
+            {
+                word += letter.Character;
+            }
+
+            if (serialize)
+            {
+                word += " " + (Enabled ? "+" : "-");
+
+                if (Comment != null)
+                    word += ' ' + Comment;
+            }
+
+            return word;
+        }
+
+        #endregion
     }
 }

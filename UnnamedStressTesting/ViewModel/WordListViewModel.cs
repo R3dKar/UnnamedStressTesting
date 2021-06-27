@@ -17,23 +17,21 @@ namespace UnnamedStressTesting
     /// </summary>
     public class WordListViewModel : BaseViewModel
     {
+        #region Статиеские члены
+
+        /// <summary>
+        /// Главный экземпляр <see cref="WordListViewModel"/>
+        /// </summary>
+        public static WordListViewModel MainInstance { get; private set; }
+
+        #endregion
+
+        #region Открытые ствойства
+
         /// <summary>
         /// Ширина левого стобца просмотра слов
         /// </summary>
         public int WordListWidth { get; set; } = 200;
-        /// <summary>
-        /// Ширина левого столбца просмотра слов, преобразованное в <see cref="GridLength"/>
-        /// </summary>
-        public GridLength WordListWidthGridLength { get => new GridLength(WordListWidth); } //Можно использовать конвертер
-
-        /// <summary>
-        /// Команда открытия папки со словарями
-        /// </summary>
-        public ICommand OpenDictionaryFolderCommand { get; set; }
-        /// <summary>
-        /// Команда для перезагрузки словарей
-        /// </summary>
-        public ICommand RefreshWordCommand { get; set; }
 
         private WordViewModel selectedItem;
         /// <summary>
@@ -53,31 +51,59 @@ namespace UnnamedStressTesting
                 selectedItem = value;
             }
         }
+
         /// <summary>
         /// Словори и слова для отображения
         /// </summary>
         public ObservableCollection<WordViewModel> Items { get; set; }
+
+        #endregion
+
+        #region Команды и делегаты
+
+        /// <summary>
+        /// Команда открытия папки со словарями
+        /// </summary>
+        public ICommand OpenDictionaryFolderCommand { get; set; }
+
+        /// <summary>
+        /// Команда для перезагрузки словарей
+        /// </summary>
+        public ICommand RefreshWordCommand { get; set; }
+
+        /// <summary>
+        /// Сохраняет изменения в словарях при закрытии приложения
+        /// </summary>
+        public EventHandler SaveDictionariesOnClose { get; set; }
+
+        #endregion
+
+        #region Конструкторы
 
         /// <summary>
         /// Стандартный конструктор
         /// </summary>
         public WordListViewModel()
         {
-            WordViewModel.HostViewModel = this;
+            MainInstance = this;
 
             OpenDictionaryFolderCommand = new RelayCommand(OpenDictionaryFolder);
             RefreshWordCommand = new RelayCommand(UpdateDictionaries);
+            SaveDictionariesOnClose = new EventHandler((s, e) => FileHelpers.SaveDictionaries());
 
             UpdateDictionaries();
         }
+
+        #endregion
+
+        #region Вспомогательные методы
 
         /// <summary>
         /// Открывает в проводнике папку со словарями. Если такой папки нет, то путь до них восстанавливается
         /// </summary>
         private void OpenDictionaryFolder()
         {
-            if (!Directory.Exists(FileHelpers.DictironaryFolderPath))
-                Directory.CreateDirectory(FileHelpers.DictironaryFolderPath);
+            FileHelpers.RestoreDictionaryPath();
 
             Process.Start("explorer", FileHelpers.DictironaryFolderPath);
         }
@@ -88,8 +114,11 @@ namespace UnnamedStressTesting
         private void UpdateDictionaries()
         {
             FileHelpers.UpdateDictionaries();
+            WordViewModel.EnabledWords.Clear();
 
+            SelectedItem = null;
             var items = new ObservableCollection<WordViewModel>();
+
             foreach (var dict in FileHelpers.WordDictionaries)
             {
                 var group = new WordViewModel(dict);
@@ -98,8 +127,8 @@ namespace UnnamedStressTesting
             }
 
             Items = items;
-            SelectedItem = null;
-            WordViewModel.EnabledWords.Clear();
         }
+
+        #endregion
     }
 }

@@ -12,28 +12,41 @@ namespace UnnamedStressTesting
     /// </summary>
     public class LetterViewModel : BaseViewModel
     {
+        #region Открытые свойства
+
         /// <summary>
         /// Под ударением буква или нет
         /// </summary>
         public bool IsStressed { get; set; }
+
         /// <summary>
         /// Символ <see cref="char"/>
         /// </summary>
         public char Character { get; set; }
+
         /// <summary>
         /// Возвращает <see cref="Character"/>, приведённый к верхнему регистру
         /// </summary>
         public char Uppercase { get => char.ToUpper(Character); }
+
         /// <summary>
         /// Возвращает <see cref="Character"/>, приведённый к нижнему регистру
         /// </summary>
         public char Lowercase { get => char.ToLower(Character); }
+
         /// <summary>
         /// Является ли символ гласным или нет
         /// </summary>
         public bool IsVowel { get => Letter.Vowels.Contains(Lowercase); }
 
+        /// <summary>
+        /// Цвет буквы
+        /// </summary>
         public Color Color { get => IsStressed ? Color.FromRgb(255, 0, 0) : Color.FromRgb(0, 0, 0); }
+
+        #endregion
+
+        #region Конструкторы
 
         /// <summary>
         /// Конструктор из существующего <see cref="Letter"/>
@@ -44,5 +57,7 @@ namespace UnnamedStressTesting
             IsStressed = letter.IsStressed;
             Character = letter.Character;
         }
+
+        #endregion
     }
 }

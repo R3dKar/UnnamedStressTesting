@@ -17,3 +17,8 @@ C:\Users\R3dKar\source\repos\UnnamedStressTesting\UnnamedStressTesting\obj\Debug
 C:\Users\R3dKar\source\repos\UnnamedStressTesting\UnnamedStressTesting\obj\Debug\UnnamedStressTesting.pdb
 C:\Users\R3dKar\source\repos\UnnamedStressTesting\UnnamedStressTesting\obj\Debug\Dictionaries\Icons.baml
 C:\Users\R3dKar\source\repos\UnnamedStressTesting\UnnamedStressTesting\obj\Debug\App.baml
+C:\Users\R3dKar\source\repos\UnnamedStressTesting\UnnamedStressTesting\bin\Debug\FontAwesome5.dll
+C:\Users\R3dKar\source\repos\UnnamedStressTesting\UnnamedStressTesting\bin\Debug\FontAwesome5.Net.dll
+C:\Users\R3dKar\source\repos\UnnamedStressTesting\UnnamedStressTesting\bin\Debug\FontAwesome5.xml
+C:\Users\R3dKar\source\repos\UnnamedStressTesting\UnnamedStressTesting\bin\Debug\FontAwesome5.Net.xml
+C:\Users\R3dKar\source\repos\UnnamedStressTesting\UnnamedStressTesting\obj\Debug\UnnamedStressTesting.csproj.CopyComplete

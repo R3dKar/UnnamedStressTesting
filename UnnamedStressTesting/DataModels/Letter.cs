@@ -7,11 +7,17 @@ namespace UnnamedStressTesting
     /// </summary>
     public class Letter
     {
+        #region Статические члены
+
         /// <summary>
         /// Список гласных, приведённые к нижнему регистру
         /// </summary>
         public static readonly List<char> Vowels = new List<char>() { 'а', 'о', 'у', 'ы', 'э', 'и', 'е', 'ю', 'ё', 'я' };
-        
+
+        #endregion
+
+        #region Открытые свойства
+
         /// <summary>
         /// Символ буквы
         /// </summary>
@@ -22,5 +28,6 @@ namespace UnnamedStressTesting
         /// </summary>
         public bool IsStressed { get; set; }
 
+        #endregion
     }
 }

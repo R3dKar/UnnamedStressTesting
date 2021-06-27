@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UnnamedStressTesting"
+        xmlns:fa5="http://schemas.fontawesome.com/icons/"
         xmlns:system="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
@@ -12,11 +13,11 @@
     </Window.DataContext>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="{Binding WordListWidthGridLength}"/>
+            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <Grid Grid.Column="0" Margin="5">
+        <Grid Grid.Column="0" Margin="5" Width="{Binding WordListWidth}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
@@ -33,24 +34,33 @@
             </Grid>
 
             <!-- Список элементов -->
-            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Visible">
-                <TreeView x:Name="WordsTreeView" ItemsSource="{Binding Items}" SelectedItemChanged="WordsTreeView_SelectedItemChanged">
-                    <TreeView.Resources>
-                        <Style TargetType="{x:Type TreeViewItem}">
-                            <Setter Property="IsExpanded" Value="True"/>
-                        </Style>
-                    </TreeView.Resources>
-                    <TreeView.ItemTemplate>
-                        <HierarchicalDataTemplate ItemsSource="{Binding Items}">
-                            <StackPanel Orientation="Horizontal">
-                                <CheckBox Margin="0 0 3 0" IsChecked="{Binding Enabled, Mode=TwoWay}"/>
-                                <TextBlock Text="{Binding Preview}"/>
-                            </StackPanel>
-                        </HierarchicalDataTemplate>
-                    </TreeView.ItemTemplate>
-                </TreeView>
-            </ScrollViewer>
+            <TreeView Grid.Row="1" x:Name="WordsTreeView" ItemsSource="{Binding Items}" SelectedItemChanged="WordsTreeView_SelectedItemChanged">
+                <TreeView.Resources>
+                    <Style TargetType="{x:Type TreeViewItem}">
+                        <Setter Property="IsExpanded" Value="{Binding Items, Converter={local:ItemsToIsExpandedConverter}}"/>
+                    </Style>
+                </TreeView.Resources>
+                <TreeView.ItemTemplate>
+                    <HierarchicalDataTemplate ItemsSource="{Binding Items}">
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox Margin="0 0 3 0" IsChecked="{Binding Enabled, Mode=TwoWay}"/>
+                            <TextBlock Text="{Binding Preview}" ToolTip="{Binding Comment}"/>
+                        </StackPanel>
+                    </HierarchicalDataTemplate>
+                </TreeView.ItemTemplate>
+                <TreeView.Template>
+                    <ControlTemplate>
+                        <Border BorderThickness="1" BorderBrush="LightGray">
+                            <ScrollViewer VerticalScrollBarVisibility="Visible">
+                                <ItemsPresenter/>
+                            </ScrollViewer>
+                        </Border>
+                    </ControlTemplate>
+                </TreeView.Template>
+            </TreeView>
         </Grid>
+
+        <!-- Слово -->
         <Viewbox Grid.Column="1" Margin="5">
             <ItemsControl ItemsSource="{Binding SelectedItem.Letters}">
                 <ItemsControl.ItemsPanel>
