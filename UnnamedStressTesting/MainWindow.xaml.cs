@@ -24,6 +24,8 @@ namespace UnnamedStressTesting
         {
             InitializeComponent();
 
+            (DataContext as WordListViewModel).RightSideWordContainer = rightSideWord;
+            (DataContext as WordListViewModel).LeftMenuContainer = leftMenuGrid;
             Closed += (DataContext as WordListViewModel).SaveDictionariesOnClose;
         }
 

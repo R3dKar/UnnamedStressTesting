@@ -17,7 +17,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <Grid Grid.Column="0" Margin="5" Width="{Binding WordListWidth}">
+        <Grid x:Name="leftMenuGrid" Grid.Column="0" Margin="5" Width="{Binding LeftMenuWidth, Mode=OneTime}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
@@ -34,7 +34,7 @@
             </Grid>
 
             <!-- Список элементов -->
-            <TreeView Grid.Row="1" x:Name="WordsTreeView" ItemsSource="{Binding Items}" SelectedItemChanged="WordsTreeView_SelectedItemChanged">
+            <TreeView Grid.Row="1"  ItemsSource="{Binding Items}" SelectedItemChanged="WordsTreeView_SelectedItemChanged">
                 <TreeView.Resources>
                     <Style TargetType="{x:Type TreeViewItem}">
                         <Setter Property="IsExpanded" Value="{Binding Items, Converter={local:ItemsToIsExpandedConverter}}"/>
@@ -61,7 +61,7 @@
         </Grid>
 
         <!-- Слово -->
-        <Viewbox Grid.Column="1" Margin="5">
+        <Viewbox x:Name="rightSideWord" Grid.Column="1" Margin="5">
             <ItemsControl ItemsSource="{Binding SelectedItem.Letters}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>

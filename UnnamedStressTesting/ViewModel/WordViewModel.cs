@@ -186,8 +186,7 @@ namespace UnnamedStressTesting
 
             foreach (var word in dictionary.Words)
             {
-                var w = new WordViewModel(word);
-                w.Parent = this;
+                var w = new WordViewModel(word) { Parent = this };
                 Items.Add(w);
             }
         }
