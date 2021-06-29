@@ -22,3 +22,4 @@ C:\Users\R3dKar\source\repos\UnnamedStressTesting\UnnamedStressTesting\bin\Debug
 C:\Users\R3dKar\source\repos\UnnamedStressTesting\UnnamedStressTesting\bin\Debug\FontAwesome5.xml
 C:\Users\R3dKar\source\repos\UnnamedStressTesting\UnnamedStressTesting\bin\Debug\FontAwesome5.Net.xml
 C:\Users\R3dKar\source\repos\UnnamedStressTesting\UnnamedStressTesting\obj\Debug\UnnamedStressTesting.csproj.CopyComplete
+C:\Users\R3dKar\source\repos\UnnamedStressTesting\UnnamedStressTesting\obj\Debug\Dictionaries\Colors.baml

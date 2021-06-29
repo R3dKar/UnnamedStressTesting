@@ -1,8 +1,13 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:fa5="http://schemas.fontawesome.com/icons/">
-
-    <fa5:SvgAwesome x:Key="FolderOpenIcon" Icon="Solid_FolderOpen" Foreground="#d8ac6a" Width="16" Height="16"/>
-    <fa5:SvgAwesome x:Key="RefreshIcon" Icon="Solid_RedoAlt" Rotation="270" Foreground="#00529c" Width="16" Height="16"/>
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Colors.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+    
+    <fa5:SvgAwesome x:Key="FolderOpenIcon" Icon="Solid_FolderOpen" Foreground="{StaticResource FolderColorBrush}" Height="16"/>
+    <fa5:SvgAwesome x:Key="RefreshIcon" Icon="Solid_RedoAlt" Rotation="270" Foreground="{StaticResource RefreshColorBrush}" Height="16"/>
+    <fa5:SvgAwesome x:Key="StartIcon" Icon="Solid_Play" Foreground="{StaticResource StartColorBrush}" Height="16"/>
+    <fa5:SvgAwesome x:Key="StopIcon" Icon="Solid_TimesCircle" Foreground="{StaticResource StopColorBrush}" Height="16"/>
     
 </ResourceDictionary>

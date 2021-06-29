@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Controls;
 using System.Windows;
 using System.Windows.Input;
 using System.Diagnostics;
-using System.IO;
 using System.Collections.ObjectModel;
 using System.Windows.Media.Animation;
+using System.Collections.Specialized;
 
 namespace UnnamedStressTesting
 {
@@ -24,6 +22,11 @@ namespace UnnamedStressTesting
         /// Главный экземпляр <see cref="WordListViewModel"/>
         /// </summary>
         public static WordListViewModel MainInstance { get; private set; }
+
+        /// <summary>
+        /// Список слов, выбранные в систему тестирования
+        /// </summary>
+        public static ObservableCollection<WordViewModel> EnabledWords { get; private set; } = new ObservableCollection<WordViewModel>();
 
         #endregion
 
@@ -69,6 +72,9 @@ namespace UnnamedStressTesting
         public FrameworkElement RightSideWordContainer { get; set; }
 
         private bool isLeftMenuHidden = false;
+        /// <summary>
+        /// Показывает, скрыто ли левое меню или нет
+        /// </summary>
         public bool IsLeftMenuHidden
         {
             get => isLeftMenuHidden;
@@ -85,6 +91,17 @@ namespace UnnamedStressTesting
                     ShowLeftMenu(0.4f);
             }
         }
+
+        /// <summary>
+        /// Показывает, запущен ли тест или нет
+        /// </summary>
+        public bool IsTestStarted { get; set; }
+
+        /// <summary>
+        /// Показывает, пуст ли список слов <see cref="WordListViewModel.EnabledWords"/>
+        /// </summary>
+        public bool IsEnabledWordEmpty { get => EnabledWords?.Count == 0; }
+
         #endregion
 
         #region Команды и делегаты
@@ -100,9 +117,24 @@ namespace UnnamedStressTesting
         public ICommand RefreshWordCommand { get; set; }
 
         /// <summary>
+        /// Команда для остановки тестирования
+        /// </summary>
+        public ICommand StartTestingCommand { get; set; }
+
+        /// <summary>
+        /// Команда для остановки тестирования
+        /// </summary>
+        public ICommand StopTestingCommand { get; set; }
+
+        /// <summary>
         /// Сохраняет изменения в словарях при закрытии приложения
         /// </summary>
         public EventHandler SaveDictionariesOnClose { get; set; }
+
+        /// <summary>
+        /// Вызывает <see cref="BaseViewModel.OnPropertyChanged"/> при изменении коллекции <see cref="WordListViewModel.EnabledWords"/>
+        /// </summary>
+        public NotifyCollectionChangedEventHandler UpdateOnEnabledWordsChanged { get; set; }
 
         #endregion
 
@@ -117,7 +149,12 @@ namespace UnnamedStressTesting
 
             OpenDictionaryFolderCommand = new RelayCommand(OpenDictionaryFolder);
             RefreshWordCommand = new RelayCommand(UpdateDictionaries);
+            StartTestingCommand = new RelayCommand(StartTesting);
+            StopTestingCommand = new RelayCommand(StopTesting);
+
             SaveDictionariesOnClose = new EventHandler((s, e) => FileHelpers.SaveDictionaries());
+            UpdateOnEnabledWordsChanged = new NotifyCollectionChangedEventHandler((s, e) => OnPropertyChanged(nameof(IsEnabledWordEmpty)));
+            EnabledWords.CollectionChanged += UpdateOnEnabledWordsChanged;
 
             UpdateDictionaries();
         }
@@ -142,7 +179,7 @@ namespace UnnamedStressTesting
         private void UpdateDictionaries()
         {
             FileHelpers.UpdateDictionaries();
-            WordViewModel.EnabledWords.Clear();
+            EnabledWords.Clear();
 
             SelectedItem = null;
             var items = new ObservableCollection<WordViewModel>();
@@ -155,6 +192,25 @@ namespace UnnamedStressTesting
             }
 
             Items = items;
+        }
+
+        /// <summary>
+        /// Запускает тестирование
+        /// </summary>
+        private void StartTesting()
+        {
+            IsTestStarted = true;
+            IsLeftMenuHidden = true;
+            SelectedItem = EnabledWords[FileHelpers.random.Next(EnabledWords.Count)];
+        }
+
+        /// <summary>
+        /// Останавливает тестирование
+        /// </summary>
+        private void StopTesting()
+        {
+            IsTestStarted = false;
+            IsLeftMenuHidden = false;
         }
 
         /// <summary>

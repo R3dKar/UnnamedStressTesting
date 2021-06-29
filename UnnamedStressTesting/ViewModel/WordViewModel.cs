@@ -9,15 +9,6 @@ namespace UnnamedStressTesting
     /// </summary>
     public class WordViewModel : BaseViewModel
     {
-        #region Статические члены
-
-        /// <summary>
-        /// Список слов, выбранные в систему тестирования
-        /// </summary>
-        public static List<WordViewModel> EnabledWords { get; private set; } = new List<WordViewModel>();
-
-        #endregion
-
         #region Открытые свойства
 
         /// <summary>
@@ -142,9 +133,9 @@ namespace UnnamedStressTesting
                 else
                 {
                     if (value)
-                        EnabledWords.Add(this);
+                        WordListViewModel.EnabledWords.Add(this);
                     else
-                        EnabledWords.Remove(this);
+                        WordListViewModel.EnabledWords.Remove(this);
 
                     Word.Enabled = value;
 

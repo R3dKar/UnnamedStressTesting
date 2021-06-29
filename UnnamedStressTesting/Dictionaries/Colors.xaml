@@ -1,0 +1,22 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Color x:Key="FolderColor">#d8ac6a</Color>
+    <SolidColorBrush x:Key="FolderColorBrush" Color="{StaticResource FolderColor}"/>
+
+    <Color x:Key="RefreshColor">#00529c</Color>
+    <SolidColorBrush x:Key="RefreshColorBrush" Color="{StaticResource RefreshColor}"/>
+
+    <Color x:Key="StartColor">#339933</Color>
+    <SolidColorBrush x:Key="StartColorBrush" Color="{StaticResource StartColor}"/>
+
+    <Color x:Key="StartPressedColor">#287928</Color>
+    <SolidColorBrush x:Key="StartPressedColorBrush" Color="{StaticResource StartPressedColor}"/>
+
+    <Color x:Key="StopColor">#e51400</Color>
+    <SolidColorBrush x:Key="StopColorBrush" Color="{StaticResource StopColor}"/>
+
+    <Color x:Key="StopPressedColor">#b71000</Color>
+    <SolidColorBrush x:Key="StopPressedColorBrush" Color="{StaticResource StopPressedColor}"/>
+
+</ResourceDictionary>

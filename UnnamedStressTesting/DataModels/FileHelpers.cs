@@ -16,6 +16,11 @@ namespace UnnamedStressTesting
         #region Статические члены
 
         /// <summary>
+        /// Экземпляр генератора случайных чисел
+        /// </summary>
+        public static readonly Random random = new Random();
+
+        /// <summary>
         /// Путь до файлов словарей
         /// </summary>
         public static readonly string DictironaryFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Unnamed Stress Testing\Словари");

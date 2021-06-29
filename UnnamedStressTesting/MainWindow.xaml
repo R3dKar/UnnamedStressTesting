@@ -11,6 +11,7 @@
     <Window.DataContext>
         <local:WordListViewModel/>
     </Window.DataContext>
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -60,24 +61,121 @@
             </TreeView>
         </Grid>
 
-        <!-- Слово -->
-        <Viewbox x:Name="rightSideWord" Grid.Column="1" Margin="5">
-            <ItemsControl ItemsSource="{Binding SelectedItem.Letters}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal"/>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding Uppercase}">
-                            <TextBlock.Foreground>
-                                <SolidColorBrush Color="{Binding Color}"/>
-                            </TextBlock.Foreground>
-                        </TextBlock>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </Viewbox>
+        <Grid Grid.Column="1" Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Слово -->
+            <Viewbox x:Name="rightSideWord" Grid.Row="0">
+                <ItemsControl ItemsSource="{Binding SelectedItem.Letters}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Uppercase}">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush Color="{Binding Color}"/>
+                                </TextBlock.Foreground>
+                            </TextBlock>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Viewbox>
+
+            <!-- Кнопка запуска теста -->
+            <Button Grid.Row="1" IsEnabled="{Binding IsEnabledWordEmpty, Converter={local:ReverseBooleanConverter}}" Height="50" Command="{Binding StartTestingCommand}" HorizontalAlignment="Center" Cursor="Hand" Visibility="{Binding IsTestStarted, Converter={local:BooleanToVisibilityConverter}, ConverterParameter=True}" ToolTip="Выберете слова из списка слева" ToolTipService.ShowOnDisabled="True" ToolTipService.IsEnabled="{Binding IsEnabledWordEmpty}">
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Style.Triggers>
+                            <EventTrigger RoutedEvent="MouseEnter">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetProperty="Foreground.Color" To="{StaticResource StartColor}" Duration="0:0:0.2" DecelerationRatio="0.9"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="MouseLeave">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetProperty="Foreground.Color" To="Black" Duration="0:0:0.2" DecelerationRatio="0.9"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Foreground" Value="{StaticResource StartPressedColorBrush }"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.7"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+                
+                <Button.Template>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <ContentPresenter/>
+                    </ControlTemplate>
+                </Button.Template>
+
+                <Button.Content>
+                    <Viewbox>
+                        <StackPanel Orientation="Horizontal">
+                            <ContentControl Content="{StaticResource StartIcon}"/>
+                            <TextBlock Text="Начать тест" FontWeight="Medium" FontSize="18" TextAlignment="Center" Margin="6 0 0 0"/>
+                        </StackPanel>
+                    </Viewbox>
+                </Button.Content>
+            </Button>
+
+            <!-- Кнопка остановки теста -->
+            <Button Grid.Row="1" Height="50" Command="{Binding StopTestingCommand}" HorizontalAlignment="Center" Cursor="Hand" Visibility="{Binding IsTestStarted, Converter={local:BooleanToVisibilityConverter}, ConverterParameter=False}">
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Style.Triggers>
+                            <EventTrigger RoutedEvent="MouseEnter">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetProperty="Foreground.Color" To="{StaticResource StopColor}" Duration="0:0:0.2" DecelerationRatio="0.9"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="MouseLeave">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetProperty="Foreground.Color" To="Black" Duration="0:0:0.2" DecelerationRatio="0.9"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Foreground" Value="{StaticResource StopPressedColorBrush }"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.7"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+
+                <Button.Template>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <ContentPresenter/>
+                    </ControlTemplate>
+                </Button.Template>
+
+                <Button.Content>
+                    <Viewbox>
+                        <StackPanel Orientation="Horizontal">
+                            <ContentControl Content="{StaticResource StopIcon}"/>
+                            <TextBlock Text="Завершить тест" FontWeight="Medium" FontSize="18" TextAlignment="Center" Margin="4 0 0 0"/>
+                        </StackPanel>
+                    </Viewbox>
+                </Button.Content>
+            </Button>
+        </Grid>
     </Grid>
 </Window>
