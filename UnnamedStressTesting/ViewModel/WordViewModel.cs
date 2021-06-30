@@ -133,9 +133,9 @@ namespace UnnamedStressTesting
                 else
                 {
                     if (value)
-                        WordListViewModel.EnabledWords.Add(this);
+                        MainWindowViewModel.EnabledWords.Add(this);
                     else
-                        WordListViewModel.EnabledWords.Remove(this);
+                        MainWindowViewModel.EnabledWords.Remove(this);
 
                     Word.Enabled = value;
 
@@ -170,7 +170,7 @@ namespace UnnamedStressTesting
         /// Конструктор для группы слов
         /// </summary>
         /// <param name="dictionary">Словарь слов</param>
-        public WordViewModel(FileDictionary dictionary)
+        public WordViewModel(WordDictionary dictionary)
         {
             Preview = Path.GetFileName(dictionary.FilePath).Replace(".txt", "");
             Items = new ObservableCollection<WordViewModel>();

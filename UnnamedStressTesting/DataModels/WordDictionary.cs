@@ -6,7 +6,7 @@ namespace UnnamedStressTesting
     /// <summary>
     /// Словарь из файла
     /// </summary>
-    public class FileDictionary
+    public class WordDictionary
     {
         #region Открытые свойства
 
@@ -27,7 +27,7 @@ namespace UnnamedStressTesting
         /// Конструктор словаря
         /// </summary>
         /// <param name="filename">Путь к файлу словаря</param>
-        public FileDictionary(string filename)
+        public WordDictionary(string filename)
         {
             FilePath = filename;
 

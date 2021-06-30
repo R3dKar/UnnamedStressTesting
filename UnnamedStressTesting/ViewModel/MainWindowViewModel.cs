@@ -14,14 +14,14 @@ namespace UnnamedStressTesting
     /// <summary>
     /// ViewModel для главного окна
     /// </summary>
-    public class WordListViewModel : BaseViewModel
+    public class MainWindowViewModel : BaseViewModel
     {
         #region Статиеские члены
 
         /// <summary>
-        /// Главный экземпляр <see cref="WordListViewModel"/>
+        /// Главный экземпляр <see cref="MainWindowViewModel"/>
         /// </summary>
-        public static WordListViewModel MainInstance { get; private set; }
+        public static MainWindowViewModel MainInstance { get; private set; }
 
         /// <summary>
         /// Список слов, выбранные в систему тестирования
@@ -98,7 +98,7 @@ namespace UnnamedStressTesting
         public bool IsTestStarted { get; set; }
 
         /// <summary>
-        /// Показывает, пуст ли список слов <see cref="WordListViewModel.EnabledWords"/>
+        /// Показывает, пуст ли список слов <see cref="MainWindowViewModel.EnabledWords"/>
         /// </summary>
         public bool IsEnabledWordEmpty { get => EnabledWords?.Count == 0; }
 
@@ -132,7 +132,7 @@ namespace UnnamedStressTesting
         public EventHandler SaveDictionariesOnClose { get; set; }
 
         /// <summary>
-        /// Вызывает <see cref="BaseViewModel.OnPropertyChanged"/> при изменении коллекции <see cref="WordListViewModel.EnabledWords"/>
+        /// Вызывает <see cref="BaseViewModel.OnPropertyChanged"/> при изменении коллекции <see cref="MainWindowViewModel.EnabledWords"/>
         /// </summary>
         public NotifyCollectionChangedEventHandler UpdateOnEnabledWordsChanged { get; set; }
 
@@ -143,7 +143,7 @@ namespace UnnamedStressTesting
         /// <summary>
         /// Стандартный конструктор
         /// </summary>
-        public WordListViewModel()
+        public MainWindowViewModel()
         {
             MainInstance = this;
 
@@ -330,7 +330,7 @@ namespace UnnamedStressTesting
         }
 
         /// <summary>
-        /// Анимированно меняет значение <see cref="WordListViewModel.SelectedItem"/>
+        /// Анимированно меняет значение <see cref="MainWindowViewModel.SelectedItem"/>
         /// </summary>
         /// <param name="value">Устанавливаемое значение</param>
         private async void ChangeSelectedItem(WordViewModel value, float duration)

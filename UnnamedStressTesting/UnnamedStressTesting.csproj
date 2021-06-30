@@ -72,14 +72,14 @@
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\ItemsToIsExpandedConverter.cs" />
     <Compile Include="Converters\ReverseBooleanConverter.cs" />
-    <Compile Include="DataModels\FileDictionary.cs" />
+    <Compile Include="DataModels\WordDictionary.cs" />
     <Compile Include="DataModels\Letter.cs" />
     <Compile Include="DataModels\Word.cs" />
     <Compile Include="DataModels\FileHelpers.cs" />
     <Compile Include="ViewModel\Base\BaseViewModel.cs" />
     <Compile Include="ViewModel\Base\RelayCommand.cs" />
     <Compile Include="ViewModel\LetterViewModel.cs" />
-    <Compile Include="ViewModel\WordListViewModel.cs" />
+    <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="ViewModel\WordViewModel.cs" />
     <Page Include="Dictionaries\Colors.xaml">
       <SubType>Designer</SubType>

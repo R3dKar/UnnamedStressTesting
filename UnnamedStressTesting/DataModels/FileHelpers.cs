@@ -28,7 +28,7 @@ namespace UnnamedStressTesting
         /// <summary>
         /// Список всех загруженных словарей на данный момент
         /// </summary>
-        public static List<FileDictionary> WordDictionaries = new List<FileDictionary>();
+        public static List<WordDictionary> WordDictionaries = new List<WordDictionary>();
 
         #endregion
 
@@ -74,16 +74,16 @@ namespace UnnamedStressTesting
         {
             SaveDictionaries();
 
-            WordDictionaries = new List<FileDictionary>();
+            WordDictionaries = new List<WordDictionary>();
 
-            GetDictionaryList().ForEach(item => WordDictionaries.Add(new FileDictionary(item)));
+            GetDictionaryList().ForEach(item => WordDictionaries.Add(new WordDictionary(item)));
         }
 
         /// <summary>
         /// Обновить словарь для существующих слов
         /// </summary>
         /// <param name="dict">Словарь, который нужно обновить</param>
-        public static void UpdateDictionary(FileDictionary dict)
+        public static void UpdateDictionary(WordDictionary dict)
         {
             var lines = GetWords(dict.FilePath);
 

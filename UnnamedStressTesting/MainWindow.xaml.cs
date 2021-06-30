@@ -24,15 +24,15 @@ namespace UnnamedStressTesting
         {
             InitializeComponent();
 
-            (DataContext as WordListViewModel).RightSideWordContainer = rightSideWord;
-            (DataContext as WordListViewModel).LeftMenuContainer = leftMenuGrid;
-            Closed += (DataContext as WordListViewModel).SaveDictionariesOnClose;
+            (DataContext as MainWindowViewModel).RightSideWordContainer = rightSideWord;
+            (DataContext as MainWindowViewModel).LeftMenuContainer = leftMenuGrid;
+            Closed += (DataContext as MainWindowViewModel).SaveDictionariesOnClose;
         }
 
         // костыль (или нет?? :thinking:)
         private void WordsTreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            (DataContext as WordListViewModel).SelectedItem = (WordViewModel)(sender as TreeView).SelectedItem;
+            (DataContext as MainWindowViewModel).SelectedItem = (WordViewModel)(sender as TreeView).SelectedItem;
         }
     }
 }
