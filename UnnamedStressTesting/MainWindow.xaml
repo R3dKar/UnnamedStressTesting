@@ -77,11 +77,63 @@
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Uppercase}">
-                                <TextBlock.Foreground>
-                                    <SolidColorBrush Color="{Binding Color}"/>
-                                </TextBlock.Foreground>
-                            </TextBlock>
+                            <Grid>
+                                <Button Content="{Binding UppercaseString}" Foreground="{Binding Color}" Cursor="{Binding Cursor}">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="{x:Type Button}">
+                                            <Grid>
+                                                <TextBlock Text="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}"/>
+                                                <TextBlock Name="stressMarker" Margin="0 -4 0 4" Foreground="{TemplateBinding Foreground}" HorizontalAlignment="Center" VerticalAlignment="Top" Text="′">
+                                                    <TextBlock.Visibility>
+                                                        <MultiBinding Converter="{local:StressVisibilityMultiConverter}">
+                                                            <Binding Path="DataContext.IsStressed" RelativeSource="{RelativeSource TemplatedParent}"/>
+                                                            <Binding Path="DataContext.IsVowel" RelativeSource="{RelativeSource TemplatedParent}"/>
+                                                            <Binding Path="IsMouseOver" RelativeSource="{RelativeSource TemplatedParent}"/>
+                                                            <Binding Path="DataContext.IsTestStarted" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}"/>
+                                                        </MultiBinding>
+                                                    </TextBlock.Visibility>
+                                                    <TextBlock.RenderTransform>
+                                                        <TransformGroup>
+                                                            <TranslateTransform X="3"/>
+                                                            <RotateTransform Angle="20"/>
+                                                        </TransformGroup>
+                                                    </TextBlock.RenderTransform>
+                                                </TextBlock>
+                                            </Grid>
+                                            <!-- TODO: добавить команды в тесте для букв, стадию показа ответа, анимацию для неверной буквы -->
+                                            <ControlTemplate.Triggers>
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource TemplatedParent}}" Value="True"/>
+                                                        <Condition Binding="{Binding DataContext.IsTestStarted, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Value="True"/>
+                                                    </MultiDataTrigger.Conditions>
+                                                    <MultiDataTrigger.EnterActions>
+                                                        <BeginStoryboard>
+                                                            <Storyboard>
+                                                                <DoubleAnimation Storyboard.TargetName="stressMarker" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3" DecelerationRatio="0.9"/>
+                                                                <ThicknessAnimation Storyboard.TargetName="stressMarker" Storyboard.TargetProperty="Margin" From="0 0 0 0" To="0 -4 0 4" Duration="0:0:0.1" DecelerationRatio="0.9"/>
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                    </MultiDataTrigger.EnterActions>
+                                                </MultiDataTrigger>
+                                                <!--<EventTrigger RoutedEvent="MouseEnter">
+                                                    <BeginStoryboard>
+                                                        <Storyboard>
+                                                            <DoubleAnimation Storyboard.TargetName="stressMarker" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3" DecelerationRatio="0.9"/>
+                                                            <ThicknessAnimation Storyboard.TargetName="stressMarker" Storyboard.TargetProperty="Margin" From="0 0 0 0" To="0 -4 0 4" Duration="0:0:0.1" DecelerationRatio="0.9"/>
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </EventTrigger>-->
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                    <!--<TextBlock Text="{Binding Uppercase}">
+                                        <TextBlock.Foreground>
+                                            <SolidColorBrush Color="{Binding Color}"/>
+                                        </TextBlock.Foreground>
+                                    </TextBlock>-->
+                                </Button>
+                            </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
@@ -115,7 +167,7 @@
                         </Style.Triggers>
                     </Style>
                 </Button.Style>
-                
+
                 <Button.Template>
                     <ControlTemplate TargetType="{x:Type Button}">
                         <ContentPresenter/>

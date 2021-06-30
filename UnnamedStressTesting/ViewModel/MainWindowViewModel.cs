@@ -102,6 +102,11 @@ namespace UnnamedStressTesting
         /// </summary>
         public bool IsEnabledWordEmpty { get => EnabledWords?.Count == 0; }
 
+        /// <summary>
+        /// Показывает правильный ответ для тестирования или нет
+        /// </summary>
+        public bool IsWordReveal { get; set; }
+
         #endregion
 
         #region Команды и делегаты
@@ -201,6 +206,7 @@ namespace UnnamedStressTesting
         {
             IsTestStarted = true;
             IsLeftMenuHidden = true;
+            IsWordReveal = true; //Debug
             SelectedItem = EnabledWords[FileHelpers.random.Next(EnabledWords.Count)];
         }
 
@@ -211,6 +217,13 @@ namespace UnnamedStressTesting
         {
             IsTestStarted = false;
             IsLeftMenuHidden = false;
+            IsWordReveal = false;
+
+            foreach(var letter in SelectedItem.Letters)
+            {
+                letter.OnPropertyChanged(nameof(letter.Color));
+                letter.OnPropertyChanged(nameof(letter.Cursor));
+            }
         }
 
         /// <summary>

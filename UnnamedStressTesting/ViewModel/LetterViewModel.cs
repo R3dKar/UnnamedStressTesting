@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace UnnamedStressTesting
@@ -30,9 +31,19 @@ namespace UnnamedStressTesting
         public char Uppercase { get => char.ToUpper(Character); }
 
         /// <summary>
+        /// Возвращает Character, приведённый к верхнему регистру и преобразованный к типу <see cref="string"/>
+        /// </summary>
+        public string UppercaseString { get => Uppercase.ToString(); }
+
+        /// <summary>
         /// Возвращает <see cref="Character"/>, приведённый к нижнему регистру
         /// </summary>
         public char Lowercase { get => char.ToLower(Character); }
+
+        /// <summary>
+        /// Возвращает Character, приведённый к нижнему регистру и преобразованный к типу <see cref="string"/>
+        /// </summary>
+        public string LowercaseString { get => Lowercase.ToString(); }
 
         /// <summary>
         /// Является ли символ гласным или нет
@@ -42,7 +53,9 @@ namespace UnnamedStressTesting
         /// <summary>
         /// Цвет буквы
         /// </summary>
-        public Color Color { get => IsStressed ? Color.FromRgb(255, 0, 0) : Color.FromRgb(0, 0, 0); }
+        public SolidColorBrush Color { get => IsStressed && !MainWindowViewModel.MainInstance.IsTestStarted ? new SolidColorBrush(Colors.Red) : new SolidColorBrush(Colors.Black); }
+        
+        public Cursor Cursor { get => MainWindowViewModel.MainInstance.IsTestStarted && IsVowel ? Cursors.Hand : Cursors.Arrow; }
 
         #endregion
 
