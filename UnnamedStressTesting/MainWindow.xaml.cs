@@ -27,6 +27,8 @@ namespace UnnamedStressTesting
             (DataContext as MainWindowViewModel).RightSideWordContainer = rightSideWord;
             (DataContext as MainWindowViewModel).LeftMenuContainer = leftMenuGrid;
             Closed += (DataContext as MainWindowViewModel).SaveDictionariesOnClose;
+
+            (DataContext as MainWindowViewModel).SelectedItem = MainWindowViewModel.EnabledWords[FileHelpers.random.Next(MainWindowViewModel.EnabledWords.Count)]; //Debug
         }
 
         // костыль (или нет?? :thinking:)

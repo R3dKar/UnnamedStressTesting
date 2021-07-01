@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -41,7 +39,7 @@ namespace UnnamedStressTesting
             get => selectedItem;
             set
             {
-                if (selectedItem == value)
+                if (selectedItem == value && !IsTestStarted)
                     return;
 
                 if (value != null && value.IsTreeViewGroup)
@@ -106,6 +104,11 @@ namespace UnnamedStressTesting
         /// Показывает правильный ответ для тестирования или нет
         /// </summary>
         public bool IsWordReveal { get; set; }
+
+        /// <summary>
+        /// Показывает индекс выбранной в тесте буквы
+        /// </summary>
+        public int PressedIndex { get; set; }
 
         #endregion
 
@@ -206,7 +209,8 @@ namespace UnnamedStressTesting
         {
             IsTestStarted = true;
             IsLeftMenuHidden = true;
-            IsWordReveal = true; //Debug
+            IsWordReveal = false;
+            PressedIndex = -1;
             SelectedItem = EnabledWords[FileHelpers.random.Next(EnabledWords.Count)];
         }
 
@@ -218,12 +222,7 @@ namespace UnnamedStressTesting
             IsTestStarted = false;
             IsLeftMenuHidden = false;
             IsWordReveal = false;
-
-            foreach(var letter in SelectedItem.Letters)
-            {
-                letter.OnPropertyChanged(nameof(letter.Color));
-                letter.OnPropertyChanged(nameof(letter.Cursor));
-            }
+            PressedIndex = -1;
         }
 
         /// <summary>
@@ -352,6 +351,24 @@ namespace UnnamedStressTesting
             selectedItem = value;
             OnPropertyChanged(nameof(SelectedItem));
             await FadeInWord(duration);
+        }
+
+        /// <summary>
+        /// Меняет текущее слово на следующее случайным образом
+        /// </summary>
+        public void NextWord()
+        {
+            if (!IsTestStarted)
+                return;
+
+            var word = EnabledWords[FileHelpers.random.Next(EnabledWords.Count)];
+
+            while (word == SelectedItem && EnabledWords.Count > 1)
+                word = EnabledWords[FileHelpers.random.Next(EnabledWords.Count)];
+
+            PressedIndex = -1;
+            IsWordReveal = false;
+            SelectedItem = word;
         }
 
         #endregion

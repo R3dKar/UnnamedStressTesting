@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using System.Windows.Media;
+﻿using System.Windows.Input;
 
 namespace UnnamedStressTesting
 {
@@ -50,12 +44,14 @@ namespace UnnamedStressTesting
         /// </summary>
         public bool IsVowel { get => Letter.Vowels.Contains(Lowercase); }
 
+        #endregion
+
+        #region Команды
+
         /// <summary>
-        /// Цвет буквы
+        /// Команды выбора буквы
         /// </summary>
-        public SolidColorBrush Color { get => IsStressed && !MainWindowViewModel.MainInstance.IsTestStarted ? new SolidColorBrush(Colors.Red) : new SolidColorBrush(Colors.Black); }
-        
-        public Cursor Cursor { get => MainWindowViewModel.MainInstance.IsTestStarted && IsVowel ? Cursors.Hand : Cursors.Arrow; }
+        public ICommand LetterCommand { get; set; }
 
         #endregion
 
@@ -69,6 +65,38 @@ namespace UnnamedStressTesting
         {
             IsStressed = letter.IsStressed;
             Character = letter.Character;
+
+            LetterCommand = new RelayCommand(RevealWord);
+        }
+
+        /// <summary>
+        /// Раскрывает слово
+        /// </summary>
+        private void RevealWord()
+        {
+            if (!MainWindowViewModel.MainInstance.IsTestStarted || (MainWindowViewModel.MainInstance.IsWordReveal && !IsStressed) || !IsVowel)
+                return;
+
+            if (MainWindowViewModel.MainInstance.IsWordReveal && IsStressed)
+            {
+                MainWindowViewModel.MainInstance.NextWord();
+
+                //TODO: добавить логику для следующего слова
+                
+                return;
+            }
+
+            MainWindowViewModel.MainInstance.IsWordReveal = true;
+            MainWindowViewModel.MainInstance.PressedIndex = MainWindowViewModel.MainInstance.SelectedItem.Letters.IndexOf(this);
+
+            if (IsStressed)
+            {
+                //TODO: добавить логику для правильного ответа
+            }
+            else
+            {
+                //TODO: доюавить логику для неправильного ответа
+            }
         }
 
         #endregion
