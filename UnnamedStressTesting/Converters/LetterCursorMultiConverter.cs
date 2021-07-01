@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace UnnamedStressTesting
 {
+    /// <summary>
+    /// Конвертер для курсора буквы, принимает в аргументы <see cref="LetterViewModel"/>, 
+    /// <see cref="MainWindowViewModel.IsTestStarted"/> и <see cref="MainWindowViewModel.IsWordReveal"/>
+    /// </summary>
     public class LetterCursorMultiConverter : BaseMultiValueConverter<LetterCursorMultiConverter>
     {
         public override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)

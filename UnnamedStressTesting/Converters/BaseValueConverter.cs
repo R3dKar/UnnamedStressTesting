@@ -5,13 +5,17 @@ using System.Windows.Markup;
 
 namespace UnnamedStressTesting
 {
+    /// <summary>
+    /// Класс-шаблон для конвертера значений
+    /// </summary>
+    /// <typeparam name="T">Тип создаваемого конвертера</typeparam>
     public abstract class BaseValueConverter<T> : MarkupExtension, IValueConverter where T : class, new()
     {
-        private static T converter = null;
+        private static T instance = null;
 
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
-            return converter ?? (converter = new T());
+            return instance ?? (instance = new T());
         }
 
         public abstract object Convert(object value, Type targetType, object parameter, CultureInfo culture);
