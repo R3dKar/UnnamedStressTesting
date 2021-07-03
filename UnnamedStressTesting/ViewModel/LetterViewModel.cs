@@ -1,11 +1,9 @@
-﻿using System.Windows.Input;
-
-namespace UnnamedStressTesting
+﻿namespace UnnamedStressTesting
 {
     /// <summary>
-    /// ViewModel для <see cref="Letter"/>
+    /// Абстрактный класс ViewModel для <see cref="Letter"/>
     /// </summary>
-    public class LetterViewModel : BaseViewModel
+    public abstract class LetterViewModel : BaseViewModel
     {
         #region Открытые свойства
 
@@ -39,20 +37,6 @@ namespace UnnamedStressTesting
         /// </summary>
         public string LowercaseString { get => Lowercase.ToString(); }
 
-        /// <summary>
-        /// Является ли символ гласным или нет
-        /// </summary>
-        public bool IsVowel { get => Letter.Vowels.Contains(Lowercase); }
-
-        #endregion
-
-        #region Команды
-
-        /// <summary>
-        /// Команды выбора буквы
-        /// </summary>
-        public ICommand LetterCommand { get; set; }
-
         #endregion
 
         #region Конструкторы
@@ -65,38 +49,21 @@ namespace UnnamedStressTesting
         {
             IsStressed = letter.IsStressed;
             Character = letter.Character;
-
-            LetterCommand = new RelayCommand(RevealWord);
         }
 
         /// <summary>
-        /// Раскрывает слово
+        /// Исходя из передаваемого <see cref="Letter"/> возвращает ViewModel наследуемого от <see cref="LetterViewModel"/>
         /// </summary>
-        private void RevealWord()
+        /// <param name="letter">Буква</param>
+        /// <returns>ViewModel нужного типа</returns>
+        public static LetterViewModel GetViewModel(Letter letter)
         {
-            if (!MainWindowViewModel.MainInstance.IsTestStarted || (MainWindowViewModel.MainInstance.IsWordReveal && !IsStressed) || !IsVowel)
-                return;
-
-            if (MainWindowViewModel.MainInstance.IsWordReveal && IsStressed)
-            {
-                MainWindowViewModel.MainInstance.NextWord();
-
-                //TODO: добавить логику для следующего слова
-                
-                return;
-            }
-
-            MainWindowViewModel.MainInstance.IsWordReveal = true;
-            MainWindowViewModel.MainInstance.PressedIndex = MainWindowViewModel.MainInstance.SelectedItem.Letters.IndexOf(this);
-
-            if (IsStressed)
-            {
-                //TODO: добавить логику для правильного ответа
-            }
+            if (!letter.IsVowel)
+                return new ConsonantLetterViewModel(letter);
+            else if (letter.IsStressed)
+                return new StressedLetterViewModel(letter);
             else
-            {
-                //TODO: доюавить логику для неправильного ответа
-            }
+                return new VowelLetterViewModel(letter);
         }
 
         #endregion

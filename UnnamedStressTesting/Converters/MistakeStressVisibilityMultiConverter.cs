@@ -29,7 +29,12 @@ namespace UnnamedStressTesting
                     return Visibility.Collapsed;
                 }
 
-                if (isWordReveal && !letter.IsStressed && pressedIndex == MainWindowViewModel.MainInstance.SelectedItem.Letters.IndexOf(letter))
+                bool isPressed = false;
+
+                if (MainWindowViewModel.MainInstance.SelectedItem != null)
+                    isPressed = MainWindowViewModel.MainInstance.SelectedItem.Letters.IndexOf(letter) == pressedIndex;
+
+                if (isWordReveal && isPressed)
                     return Visibility.Visible;
             }
             return Visibility.Collapsed;

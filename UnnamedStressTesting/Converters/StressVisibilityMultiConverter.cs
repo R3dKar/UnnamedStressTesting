@@ -5,8 +5,7 @@ using System.Globalization;
 namespace UnnamedStressTesting
 {
     /// <summary>
-    /// Конвертер для видимости знака ударения над буквой, принимает IsMouseOver, <see cref="MainWindowViewModel.IsTestStarted"/>, 
-    /// <see cref="MainWindowViewModel.IsWordReveal"/>, <see cref="MainWindowViewModel.PressedIndex"/> и <see cref="LetterViewModel"/>
+    /// Конвертер для видимости знака ударения над буквой, принимает разные параметры взависимости от типа буквы
     /// </summary>
     public class StressVisibilityMultiConverter : BaseMultiValueConverter<StressVisibilityMultiConverter>
     {
@@ -33,14 +32,34 @@ namespace UnnamedStressTesting
                     return Visibility.Visible;
                 }
 
-                bool isPressed;
+                bool isPressed = false;
 
-                if (MainWindowViewModel.MainInstance.SelectedItem is null)
-                    isPressed = false;
-                else
+                if (MainWindowViewModel.MainInstance.SelectedItem != null)
                     isPressed = MainWindowViewModel.MainInstance.SelectedItem.Letters.IndexOf(letter) == pressedIndex;
 
-                if ((letter.IsStressed && !isTestStarted) || (isTestStarted && !isWordReveal && isMouseOver && letter.IsVowel) || (isTestStarted && isWordReveal && (letter.IsStressed || isPressed)))
+                if ((isMouseOver && isTestStarted && !isWordReveal) || isPressed)
+                    return Visibility.Visible;
+                else
+                    return Visibility.Collapsed;
+            }
+            else if (values.Length == 3)
+            {
+                bool isMouseOver;
+                bool isTestStarted;
+                bool isWordReveal;
+
+                try
+                {
+                    isMouseOver = (bool)values[0];
+                    isTestStarted = (bool)values[1];
+                    isWordReveal = (bool)values[2];
+                }
+                catch (InvalidCastException)
+                {
+                    return Visibility.Visible;
+                }
+
+                if (!isTestStarted || (isMouseOver && isTestStarted) || isWordReveal)
                     return Visibility.Visible;
                 else
                     return Visibility.Collapsed;

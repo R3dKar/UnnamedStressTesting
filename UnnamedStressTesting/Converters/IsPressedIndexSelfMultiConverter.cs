@@ -25,8 +25,12 @@ namespace UnnamedStressTesting
                     return false;
                 }
 
-                if (MainWindowViewModel.MainInstance.SelectedItem.Letters.IndexOf(letter) == pressedIndex)
-                    return true;
+                bool isPressed = false;
+
+                if (MainWindowViewModel.MainInstance.SelectedItem != null)
+                    isPressed = MainWindowViewModel.MainInstance.SelectedItem.Letters.IndexOf(letter) == pressedIndex;
+
+                return isPressed;
             }
             return false;
         }

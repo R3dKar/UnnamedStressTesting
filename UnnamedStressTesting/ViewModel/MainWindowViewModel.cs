@@ -98,7 +98,7 @@ namespace UnnamedStressTesting
         /// <summary>
         /// Показывает, пуст ли список слов <see cref="MainWindowViewModel.EnabledWords"/>
         /// </summary>
-        public bool IsEnabledWordEmpty { get => EnabledWords?.Count == 0; }
+        public bool IsEnabledWordEmpty { get => EnabledWords?.Count < 2; }
 
         /// <summary>
         /// Показывает правильный ответ для тестирования или нет
@@ -108,7 +108,7 @@ namespace UnnamedStressTesting
         /// <summary>
         /// Показывает индекс выбранной в тесте буквы
         /// </summary>
-        public int PressedIndex { get; set; }
+        public int PressedIndex { get; set; } = -1;
 
         #endregion
 
@@ -209,9 +209,7 @@ namespace UnnamedStressTesting
         {
             IsTestStarted = true;
             IsLeftMenuHidden = true;
-            IsWordReveal = false;
-            PressedIndex = -1;
-            SelectedItem = EnabledWords[FileHelpers.random.Next(EnabledWords.Count)];
+            NextWord();
         }
 
         /// <summary>
@@ -349,6 +347,8 @@ namespace UnnamedStressTesting
         {
             await FadeOutWord(duration);
             selectedItem = value;
+            IsWordReveal = false;
+            PressedIndex = -1;
             OnPropertyChanged(nameof(SelectedItem));
             await FadeInWord(duration);
         }
@@ -366,8 +366,6 @@ namespace UnnamedStressTesting
             while (word == SelectedItem && EnabledWords.Count > 1)
                 word = EnabledWords[FileHelpers.random.Next(EnabledWords.Count)];
 
-            PressedIndex = -1;
-            IsWordReveal = false;
             SelectedItem = word;
         }
 
