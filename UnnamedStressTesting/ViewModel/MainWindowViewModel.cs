@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Collections.ObjectModel;
 using System.Windows.Media.Animation;
 using System.Collections.Specialized;
+using System.Threading;
 
 namespace UnnamedStressTesting
 {
@@ -110,6 +111,20 @@ namespace UnnamedStressTesting
         /// </summary>
         public int PressedIndex { get; set; }
 
+        /// <summary>
+        /// Источник токена для отмены задачи на показ подсказки
+        /// </summary>
+        private CancellationTokenSource tokenSource;
+        /// <summary>
+        /// Получает токен для отмены задачи
+        /// </summary>
+        public CancellationToken CancellationToken { get => tokenSource.Token; }
+
+        /// <summary>
+        /// Показывает, показывается ли подсказка или нет
+        /// </summary>
+        public bool ShowNextQuestionHint { get; set; } = false;
+
         #endregion
 
         #region Команды и делегаты
@@ -163,6 +178,8 @@ namespace UnnamedStressTesting
             SaveDictionariesOnClose = new EventHandler((s, e) => FileHelpers.SaveDictionaries());
             UpdateOnEnabledWordsChanged = new NotifyCollectionChangedEventHandler((s, e) => OnPropertyChanged(nameof(IsEnabledWordEmpty)));
             EnabledWords.CollectionChanged += UpdateOnEnabledWordsChanged;
+
+            tokenSource = new CancellationTokenSource();
 
             UpdateDictionaries();
         }
@@ -223,6 +240,7 @@ namespace UnnamedStressTesting
             IsLeftMenuHidden = false;
             IsWordReveal = false;
             PressedIndex = -1;
+            ShowNextQuestionHint = false;
         }
 
         /// <summary>
@@ -349,8 +367,25 @@ namespace UnnamedStressTesting
         {
             await FadeOutWord(duration);
             selectedItem = value;
+            IsWordReveal = false;
+            PressedIndex = -1;
             OnPropertyChanged(nameof(SelectedItem));
             await FadeInWord(duration);
+        }
+
+        /// <summary>
+        /// Запускает таймер на показ подсказки для перехода к следующему вопросу (система просто не очень очевидная)
+        /// </summary>
+        public async void StartShowingHint()
+        {
+            await Task.Delay(4000);
+            if (CancellationToken.IsCancellationRequested)
+            {
+                tokenSource.Dispose();
+                tokenSource = new CancellationTokenSource();
+                return;
+            }
+            ShowNextQuestionHint = true;
         }
 
         /// <summary>
@@ -366,8 +401,10 @@ namespace UnnamedStressTesting
             while (word == SelectedItem && EnabledWords.Count > 1)
                 word = EnabledWords[FileHelpers.random.Next(EnabledWords.Count)];
 
-            PressedIndex = -1;
-            IsWordReveal = false;
+            if (!ShowNextQuestionHint)
+                tokenSource.Cancel();
+            else
+                ShowNextQuestionHint = false;
             SelectedItem = word;
         }
 

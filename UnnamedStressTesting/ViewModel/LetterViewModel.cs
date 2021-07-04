@@ -88,6 +88,7 @@ namespace UnnamedStressTesting
 
             MainWindowViewModel.MainInstance.IsWordReveal = true;
             MainWindowViewModel.MainInstance.PressedIndex = MainWindowViewModel.MainInstance.SelectedItem.Letters.IndexOf(this);
+            MainWindowViewModel.MainInstance.StartShowingHint();
 
             if (IsStressed)
             {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Windows;
 using System.Windows.Media;
 
 namespace UnnamedStressTesting
@@ -9,6 +10,21 @@ namespace UnnamedStressTesting
     /// </summary>
     public class LetterForegroundMultiConverter : BaseMultiValueConverter<LetterForegroundMultiConverter>
     {
+        private static Color stressPreviewLetterColor;
+        /// <summary>
+        /// Ресурс StressPreviewLetterColor
+        /// </summary>
+        public static Color StressPreviewLetterColor
+        {
+            get
+            {
+                if (stressPreviewLetterColor == Color.FromArgb(0,0,0,0))
+                    stressPreviewLetterColor = (Color)Application.Current.FindResource("StressPreviewLetterColor");
+                
+                return stressPreviewLetterColor;
+            }
+        }
+
         public override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             if (values.Length == 2)
@@ -27,7 +43,7 @@ namespace UnnamedStressTesting
                 }
 
                 if (letter.IsStressed && !isTestStarted)
-                    return Colors.Green;
+                    return StressPreviewLetterColor;
             }
             return Colors.Black;
         }

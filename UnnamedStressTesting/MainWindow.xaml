@@ -151,7 +151,7 @@
                                                     <MultiDataTrigger.EnterActions>
                                                         <BeginStoryboard>
                                                             <Storyboard>
-                                                                <ColorAnimation Storyboard.TargetProperty="Foreground.Color" To="Red" Duration="0:0:0.2" DecelerationRatio="0.9"/>
+                                                                <ColorAnimation Storyboard.TargetProperty="Foreground.Color" To="{StaticResource IncorrectLetterColor}" Duration="0:0:0.2" DecelerationRatio="0.9"/>
                                                                 <DoubleAnimation Storyboard.TargetName="incorrectStress" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3" DecelerationRatio="0.9"/>
                                                                 <ThicknessAnimation Storyboard.TargetName="incorrectStress" Storyboard.TargetProperty="Margin" From="-8 0.7 8 -0.7" To="-3.8 2.3 3.8 -2.3" Duration="0:0:0.3" DecelerationRatio="0.9"/>
                                                             </Storyboard>
@@ -175,7 +175,7 @@
                                                     <MultiDataTrigger.EnterActions>
                                                         <BeginStoryboard>
                                                             <Storyboard>
-                                                                <ColorAnimation Storyboard.TargetProperty="Foreground.Color" To="Green" Duration="0:0:0.2" DecelerationRatio="0.9"/>
+                                                                <ColorAnimation Storyboard.TargetProperty="Foreground.Color" To="{StaticResource CorrectLetterColor}" Duration="0:0:0.2" DecelerationRatio="0.9"/>
                                                             </Storyboard>
                                                         </BeginStoryboard>
                                                     </MultiDataTrigger.EnterActions>
@@ -197,7 +197,7 @@
                                                     <MultiDataTrigger.EnterActions>
                                                         <BeginStoryboard>
                                                             <Storyboard>
-                                                                <ColorAnimation Storyboard.TargetProperty="Foreground.Color" To="Green" Duration="0:0:0.2" DecelerationRatio="0.9"/>
+                                                                <ColorAnimation Storyboard.TargetProperty="Foreground.Color" To="{StaticResource CorrectLetterColor}" Duration="0:0:0.2" DecelerationRatio="0.9"/>
                                                                 <DoubleAnimation Storyboard.TargetName="stressMarker" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3" DecelerationRatio="0.9"/>
                                                                 <ThicknessAnimation Storyboard.TargetName="stressMarker" Storyboard.TargetProperty="Margin" From="0" To="0 -4 0 4" Duration="0:0:0.1" DecelerationRatio="0.9"/>
                                                             </Storyboard>
@@ -212,13 +212,27 @@
                                                                 <SolidColorBrush.Color>
                                                                     <MultiBinding Converter="{local:LetterForegroundMultiConverter}">
                                                                         <Binding/>
-                                                                        <Binding Path="DataContext.IsTestStarted" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}"/>
+                                                                        <Binding Path="DataContext.IsTestStarted" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type local:MainWindow}}"/>
                                                                     </MultiBinding>
                                                                 </SolidColorBrush.Color>
                                                             </SolidColorBrush>
                                                         </Setter.Value>
                                                     </Setter>
                                                 </DataTrigger>
+                                                <!-- Показывает подсказку -->
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding IsStressed}" Value="True"/>
+                                                        <Condition Binding="{Binding DataContext.ShowNextQuestionHint, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Value="True"/>
+                                                    </MultiDataTrigger.Conditions>
+                                                    <MultiDataTrigger.EnterActions>
+                                                        <BeginStoryboard>
+                                                            <Storyboard AutoReverse="True">
+                                                                <ColorAnimation Storyboard.TargetProperty="Foreground.Color" To="Black" Duration="0:0:0.3" DecelerationRatio="0.9"/>
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                    </MultiDataTrigger.EnterActions>
+                                                </MultiDataTrigger>
                                             </ControlTemplate.Triggers>
                                         </ControlTemplate>
                                     </Button.Template>
