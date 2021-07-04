@@ -161,7 +161,7 @@ namespace UnnamedStressTesting
 
             foreach (var letter in Word.Letters)
             {
-                Letters.Add(LetterViewModel.GetViewModel(letter));
+                Letters.Add(new LetterViewModel(letter));
             }
         }
 

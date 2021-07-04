@@ -74,6 +74,7 @@
     <Compile Include="Converters\IsPressedIndexSelfMultiConverter.cs" />
     <Compile Include="Converters\ItemsToIsExpandedConverter.cs" />
     <Compile Include="Converters\LetterCursorMultiConverter.cs" />
+    <Compile Include="Converters\LetterForegroundMultiConverter.cs" />
     <Compile Include="Converters\MistakeStressVisibilityMultiConverter.cs" />
     <Compile Include="Converters\ReverseBooleanConverter.cs" />
     <Compile Include="Converters\StressVisibilityMultiConverter.cs" />
@@ -83,11 +84,8 @@
     <Compile Include="DataModels\FileHelpers.cs" />
     <Compile Include="ViewModel\Base\BaseViewModel.cs" />
     <Compile Include="ViewModel\Base\RelayCommand.cs" />
-    <Compile Include="ViewModel\ConsonantLetterViewModel.cs" />
     <Compile Include="ViewModel\LetterViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
-    <Compile Include="ViewModel\StressedLetterViewModel.cs" />
-    <Compile Include="ViewModel\VowelLetterViewModel.cs" />
     <Compile Include="ViewModel\WordViewModel.cs" />
     <Page Include="Dictionaries\Colors.xaml">
       <SubType>Designer</SubType>

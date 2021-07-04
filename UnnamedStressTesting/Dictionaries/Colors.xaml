@@ -19,13 +19,4 @@
     <Color x:Key="StopPressedColor">#b71000</Color>
     <SolidColorBrush x:Key="StopPressedColorBrush" Color="{StaticResource StopPressedColor}"/>
 
-    <Color x:Key="StressPreviewLetterColor">#00ff00</Color>
-    <SolidColorBrush x:Key="StressPreviewLetterColorBrush" Color="{StaticResource StressPreviewLetterColor}"/>
-
-    <Color x:Key="CorrectLetterColor">#00ff00</Color>
-    <SolidColorBrush x:Key="CorrectLetterColorBrush" Color="{StaticResource CorrectLetterColor}"/>
-
-    <Color x:Key="IncorrectLetterColor">#ff0000</Color>
-    <SolidColorBrush x:Key="IncorrectLetterColorBrush" Color="{StaticResource IncorrectLetterColor}"/>
-
 </ResourceDictionary>

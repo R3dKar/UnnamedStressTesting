@@ -5,44 +5,31 @@ using System.Windows.Input;
 namespace UnnamedStressTesting
 {
     /// <summary>
-    /// Конвертер для курсора буквы, принимает разные параметры взависимости от типа буквы
+    /// Конвертер для курсора буквы, принимает в аргументы <see cref="LetterViewModel"/>, 
+    /// <see cref="MainWindowViewModel.IsTestStarted"/> и <see cref="MainWindowViewModel.IsWordReveal"/>
     /// </summary>
     public class LetterCursorMultiConverter : BaseMultiValueConverter<LetterCursorMultiConverter>
     {
         public override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            if (values.Length == 2)
+            if (values.Length == 3)
             {
+                LetterViewModel letter;
                 bool isTestStarted;
                 bool isWordReveal;
 
                 try
                 {
-                    isTestStarted = (bool)values[0];
-                    isWordReveal = (bool)values[1];
+                    letter = (LetterViewModel)values[0];
+                    isTestStarted = (bool)values[1];
+                    isWordReveal = (bool)values[2];
                 }
                 catch (InvalidCastException)
                 {
                     return Cursors.Arrow;
                 }
 
-                if (isTestStarted && !isWordReveal)
-                    return Cursors.Hand;
-            }
-            else if (values.Length == 1)
-            {
-                bool isTestStarted;
-
-                try
-                {
-                    isTestStarted = (bool)values[0];
-                }
-                catch (InvalidCastException)
-                {
-                    return Cursors.Arrow;
-                }
-
-                if (isTestStarted)
+                if ((letter.IsVowel && isTestStarted && !isWordReveal) || (letter.IsStressed && isWordReveal))
                     return Cursors.Hand;
             }
             return Cursors.Arrow;

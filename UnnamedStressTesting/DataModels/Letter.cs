@@ -28,11 +28,6 @@ namespace UnnamedStressTesting
         /// </summary>
         public bool IsStressed { get; set; }
 
-        /// <summary>
-        /// Гласная или нет
-        /// </summary>
-        public bool IsVowel { get => Vowels.Contains(char.ToLower(Character)); }
-
         #endregion
     }
 }
