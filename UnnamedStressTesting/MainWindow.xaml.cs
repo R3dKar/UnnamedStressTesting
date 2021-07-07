@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TaskDialogInterop;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -26,6 +27,7 @@ namespace UnnamedStressTesting
 
             (DataContext as MainWindowViewModel).RightSideWordContainer = rightSideWord;
             (DataContext as MainWindowViewModel).LeftMenuContainer = leftMenuGrid;
+            (DataContext as MainWindowViewModel).PermissionTaskDialogOptions.Owner = this;
             Closed += (DataContext as MainWindowViewModel).SaveDictionariesOnClose;
         }
 

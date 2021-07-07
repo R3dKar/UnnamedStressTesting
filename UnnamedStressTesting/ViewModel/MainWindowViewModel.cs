@@ -7,6 +7,10 @@ using System.Collections.ObjectModel;
 using System.Windows.Media.Animation;
 using System.Collections.Specialized;
 using System.Threading;
+using System.IO;
+using System.Net;
+using System.Collections.Generic;
+using TaskDialogInterop;
 
 namespace UnnamedStressTesting
 {
@@ -114,16 +118,59 @@ namespace UnnamedStressTesting
         /// <summary>
         /// Источник токена для отмены задачи на показ подсказки
         /// </summary>
-        private CancellationTokenSource tokenSource;
+        private CancellationTokenSource hintTokenSource;
         /// <summary>
         /// Получает токен для отмены задачи
         /// </summary>
-        public CancellationToken CancellationToken { get => tokenSource.Token; }
+        public CancellationToken HintCancellationToken { get => hintTokenSource.Token; }
 
         /// <summary>
         /// Показывает, показывается ли подсказка или нет
         /// </summary>
         public bool ShowNextQuestionHint { get; set; } = false;
+
+        /// <summary>
+        /// Источник токена для отмены скачивания
+        /// </summary>
+        private CancellationTokenSource downloadTokenSource;
+        /// <summary>
+        /// Токен для отмены скачивания
+        /// </summary>
+        public CancellationToken DownloadCancellationToken { get => downloadTokenSource.Token; }
+
+        /// <summary>
+        /// Показывает, загружаются ли сейчас файлы
+        /// </summary>
+        public bool IsDownloading { get; set; }
+
+        /// <summary>
+        /// Текст для подсказки на кнопке загрузки
+        /// </summary>
+        public string DownloadingToolTipInfo { get; set; }
+
+        /// <summary>
+        /// Показывает количество процентов
+        /// </summary>
+        public int DownloadedPercent { get; set; }
+
+        /// <summary>
+        /// Словарь файл - сколько скачано
+        /// </summary>
+        public Dictionary<string, long> DownloadedBytes { get; set; }
+        /// <summary>
+        /// Словарь файл - размер
+        /// </summary>
+        public Dictionary<string, long> BytesToDownload { get; set; }
+
+        /// <summary>
+        /// Показывает способ разрешения конфликта файлов
+        /// </summary>
+        public DownloadPermissionType PermissionType { get; set; } = DownloadPermissionType.None;
+
+        /// <summary>
+        /// Конфиг для диологового окна запроса разрешения
+        /// </summary>
+        public TaskDialogOptions PermissionTaskDialogOptions;
 
         #endregion
 
@@ -150,6 +197,11 @@ namespace UnnamedStressTesting
         public ICommand StopTestingCommand { get; set; }
 
         /// <summary>
+        /// Команда для остановки тестирования
+        /// </summary>
+        public ICommand DownloadDictionariesCommand { get; set; }
+
+        /// <summary>
         /// Сохраняет изменения в словарях при закрытии приложения
         /// </summary>
         public EventHandler SaveDictionariesOnClose { get; set; }
@@ -174,12 +226,30 @@ namespace UnnamedStressTesting
             RefreshWordCommand = new RelayCommand(UpdateDictionaries);
             StartTestingCommand = new RelayCommand(StartTesting);
             StopTestingCommand = new RelayCommand(StopTesting);
+            DownloadDictionariesCommand = new RelayCommand(DownloadDictionaries);
 
             SaveDictionariesOnClose = new EventHandler((s, e) => FileHelpers.SaveDictionaries());
             UpdateOnEnabledWordsChanged = new NotifyCollectionChangedEventHandler((s, e) => OnPropertyChanged(nameof(IsEnabledWordEmpty)));
             EnabledWords.CollectionChanged += UpdateOnEnabledWordsChanged;
 
-            tokenSource = new CancellationTokenSource();
+            hintTokenSource = new CancellationTokenSource();
+            downloadTokenSource = new CancellationTokenSource();
+
+            DownloadingToolTipInfo = "Скачать словари";
+
+            DownloadedBytes = new Dictionary<string, long>();
+            BytesToDownload = new Dictionary<string, long>();
+
+            PermissionTaskDialogOptions = new TaskDialogOptions();
+            PermissionTaskDialogOptions.Title = "Конфликт";
+            PermissionTaskDialogOptions.MainInstruction = "Обнаружен конфликт файлов словерей";
+            PermissionTaskDialogOptions.Content = "Выберете необходимое действие";
+            PermissionTaskDialogOptions.CustomButtons = new string[] { "Перезаписать", "Переименовать", "Отмена" };
+            PermissionTaskDialogOptions.DefaultButtonIndex = 2;
+            PermissionTaskDialogOptions.AllowDialogCancellation = true;
+            PermissionTaskDialogOptions.MainIcon = VistaTaskDialogIcon.Warning;
+            PermissionTaskDialogOptions.FooterText = "Переименовывание произойдёт автоматически";
+            PermissionTaskDialogOptions.FooterIcon = VistaTaskDialogIcon.Information;
 
             UpdateDictionaries();
         }
@@ -236,6 +306,10 @@ namespace UnnamedStressTesting
         /// </summary>
         private void StopTesting()
         {
+            hintTokenSource.Cancel();
+            hintTokenSource.Dispose();
+            hintTokenSource = new CancellationTokenSource();
+
             IsTestStarted = false;
             IsLeftMenuHidden = false;
             IsWordReveal = false;
@@ -378,11 +452,11 @@ namespace UnnamedStressTesting
         /// </summary>
         public async void StartShowingHint()
         {
+            CancellationToken token = HintCancellationToken;
+
             await Task.Delay(4000);
-            if (CancellationToken.IsCancellationRequested)
+            if (token.IsCancellationRequested)
             {
-                tokenSource.Dispose();
-                tokenSource = new CancellationTokenSource();
                 return;
             }
             ShowNextQuestionHint = true;
@@ -402,10 +476,176 @@ namespace UnnamedStressTesting
                 word = EnabledWords[FileHelpers.random.Next(EnabledWords.Count)];
 
             if (!ShowNextQuestionHint)
-                tokenSource.Cancel();
+            {
+                hintTokenSource.Cancel();
+                hintTokenSource.Dispose();
+                hintTokenSource = new CancellationTokenSource();
+            }
             else
                 ShowNextQuestionHint = false;
+
             SelectedItem = word;
+        }
+
+        /// <summary>
+        /// Скачивает словари асинхронно
+        /// </summary>
+        private async void DownloadDictionaries()
+        {
+            if (IsDownloading)
+            {
+                downloadTokenSource.Cancel();
+                return;
+            }
+
+            if (PermissionType == DownloadPermissionType.None && !CheckForFileConflicts())
+            {
+                TaskDialogResult result = TaskDialog.Show(PermissionTaskDialogOptions);
+                switch (result.CustomButtonResult)
+                {
+                    case 0:
+                        PermissionType = DownloadPermissionType.Rewrite;
+                        break;
+                    case 1:
+                        PermissionType = DownloadPermissionType.Rename;
+                        break;
+                    case 2:
+                    case null:
+                        return;
+                }
+            }
+
+            IsDownloading = true;
+            DownloadedPercent = 0;
+
+            DownloadedBytes.Clear();
+            BytesToDownload.Clear();
+            List<Task<bool>> downloads = new List<Task<bool>>();
+
+            foreach (var keypair in FileHelpers.DefaultDictionariesFiles)
+            {
+                downloads.Add(DownloadFile(keypair.Key, keypair.Value));
+            }
+
+            try
+            {
+                bool[] results = await Task.WhenAll(downloads.ToArray());
+                bool isAnyCancelled = false;
+                foreach (bool isFinished in results)
+                    if (!isFinished)
+                    {
+                        isAnyCancelled = true;
+                        break;
+                    }
+
+                if (isAnyCancelled && DownloadCancellationToken.IsCancellationRequested)
+                {
+                    downloadTokenSource.Dispose();
+                    downloadTokenSource = new CancellationTokenSource();
+                    DownloadingToolTipInfo = "Скачавание отменено";
+                }
+                else
+                {
+                    DownloadingToolTipInfo = "Скачивание завершено";
+                    UpdateDictionaries();
+                }
+            }
+            catch (KeyNotFoundException)
+            {
+                DownloadingToolTipInfo = "Потеряно соединение с интернетом";
+            }
+
+            IsDownloading = false;
+        }
+
+        /// <summary>
+        /// Скачивает файл асинхронно
+        /// </summary>
+        /// <param name="url">Адресс, с которого качается файл</param>
+        /// <param name="preferedFileName">Предпочитаемое имя файла</param>
+        /// <returns>true если задача не отменена</returns>
+        private async Task<bool> DownloadFile(string url, string preferedFileName)
+        {
+            //url = "http://speedtest.ftp.otenet.gr/files/test1Mb.db"; //debug
+
+            if (File.Exists(Path.Combine(FileHelpers.DictironaryFolderPath, $"{preferedFileName}.txt")) && PermissionType == DownloadPermissionType.Rename)
+            {
+                int postfix = 1;
+                while (File.Exists(Path.Combine(FileHelpers.DictironaryFolderPath, $"{preferedFileName} {postfix}.txt")))
+                    postfix++;
+
+                preferedFileName += $" {postfix}";
+            }
+
+            using (WebClient web = new WebClient())
+            {
+                web.DownloadProgressChanged += (s, e) =>
+                {
+                    if (!DownloadedBytes.ContainsKey(preferedFileName))
+                    {
+                        DownloadedBytes.Add(preferedFileName, 0);
+                        BytesToDownload.Add(preferedFileName, e.TotalBytesToReceive);
+                    }
+
+                    DownloadedBytes[preferedFileName] = e.BytesReceived;
+
+                    UpdateDownloadInfo();
+                };
+                web.DownloadFileCompleted += (s, e) =>
+                {
+                    if (e.Cancelled)
+                        return;
+                };
+                Task downloadingTask = web.DownloadFileTaskAsync(url, Path.Combine(FileHelpers.DictironaryFolderPath, $"{preferedFileName}.txt"));
+
+                while (!downloadingTask.IsCompleted)
+                {
+                    if (DownloadCancellationToken.IsCancellationRequested)
+                    {
+                        web.CancelAsync();
+                        return false;
+                    }
+
+                    await Task.Delay(500);
+                }
+            }
+
+            if (BytesToDownload[preferedFileName] == 0)
+                return false;
+            else
+                return true;
+        }
+
+        /// <summary>
+        /// Обновляет в подсказке информацию о скачивании файлов
+        /// </summary>
+        private void UpdateDownloadInfo()
+        {
+            long totalBytesToDownload = 0;
+            foreach (var entry in BytesToDownload)
+                totalBytesToDownload += entry.Value;
+
+            long downloaded = 0;
+            foreach (var entry in DownloadedBytes)
+                downloaded += entry.Value;
+
+            DownloadedPercent = (int)((decimal)downloaded / (decimal)totalBytesToDownload * 100);
+            DownloadingToolTipInfo = $"Скачано: {FileHelpers.GetSizeReadable(downloaded)} из {FileHelpers.GetSizeReadable(totalBytesToDownload)}\nНажмите для отмены";
+        }
+
+        /// <summary>
+        /// Проверяет файлы словарей на наличие именных конфликтов со скачиваемыми файлами
+        /// </summary>
+        /// <returns>true если конфликтов нет</returns>
+        private bool CheckForFileConflicts()
+        {
+            foreach (var keypair in FileHelpers.DefaultDictionariesFiles)
+            {
+                if (File.Exists(Path.Combine(FileHelpers.DictironaryFolderPath, $"{keypair.Value}.txt")))
+                    return false;
+            }
+
+            return true;
         }
 
         #endregion

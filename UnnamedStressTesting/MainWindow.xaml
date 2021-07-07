@@ -18,6 +18,8 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
+        <!-- TODO: дописать логику скачивания словарей, добавить текст на пустой TreeView, скрыть букву Ё в тестах -->
+        
         <Grid x:Name="leftMenuGrid" Grid.Column="0" Margin="5" Width="{Binding LeftMenuWidth, Mode=OneTime}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -29,9 +31,18 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Button Grid.Column="0" Command="{Binding OpenDictionaryFolderCommand}" Content="{StaticResource FolderOpenIcon}" ToolTip="Открыть папку со словарями" Margin="0 0 2.5 5"/>
-                <Button Grid.Column="1" Command="{Binding RefreshWordCommand}" Content="{StaticResource RefreshIcon}" ToolTip="Обновить словари" Margin="2.5 0 0 5"/>
+                <Button Grid.Column="1" Command="{Binding RefreshWordCommand}" Content="{StaticResource RefreshIcon}" ToolTip="Обновить словари" Margin="2.5 0 2.5 5"/>
+                <Button Grid.Column="2" Command="{Binding DownloadDictionariesCommand}" ToolTip="{Binding DownloadingToolTipInfo}" Margin="2.5 0 0 5" Padding="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+                    <Button.Content>
+                        <Grid>
+                            <ProgressBar Visibility="{Binding IsDownloading, Converter={local:BooleanToVisibilityConverter}}" Minimum="0" Maximum="100" Value="{Binding DownloadedPercent}"/>
+                            <ContentControl Content="{StaticResource DownloadIcon}"/>
+                        </Grid>
+                    </Button.Content>
+                </Button>
             </Grid>
 
             <!-- Список элементов -->
@@ -78,7 +89,14 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Grid>
-                                <Button Content="{Binding UppercaseString}" Command="{Binding LetterCommand}">
+                                <Button Command="{Binding LetterCommand}">
+                                    <Button.Content>
+                                        <MultiBinding Converter="{local:HideYoMultiConverter}">
+                                            <Binding Path="UppercaseString"/>
+                                            <Binding Path="DataContext.IsTestStarted" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}"/>
+                                            <Binding Path="DataContext.IsWordReveal" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}"/>
+                                        </MultiBinding>
+                                    </Button.Content>
                                     <Button.Template>
                                         <ControlTemplate TargetType="{x:Type Button}">
                                             <Grid>

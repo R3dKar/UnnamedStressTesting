@@ -23,6 +23,15 @@ namespace UnnamedStressTesting
         /// </summary>
         public static readonly string DictironaryFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Unnamed Stress Testing\Словари");
 
+        public static readonly Dictionary<string, string> DefaultDictionariesFiles = new Dictionary<string, string>() {
+            { "https://raw.githubusercontent.com/R3dKar/UnnamedStressTesting/master/Словари/Существительные.txt", "Существительные" },
+            { "https://raw.githubusercontent.com/R3dKar/UnnamedStressTesting/master/Словари/Прилагательные.txt","Прилагательные" },
+            { "https://raw.githubusercontent.com/R3dKar/UnnamedStressTesting/master/Словари/Глаголы.txt", "Глаголы" },
+            { "https://raw.githubusercontent.com/R3dKar/UnnamedStressTesting/master/Словари/Причастия.txt", "Причастия" },
+            { "https://raw.githubusercontent.com/R3dKar/UnnamedStressTesting/master/Словари/Деепричастия.txt", "Деепричастия" },
+            { "https://raw.githubusercontent.com/R3dKar/UnnamedStressTesting/master/Словари/Наречия.txt", "Наречия" }
+        };
+
         /// <summary>
         /// Список всех загруженных словарей на данный момент
         /// </summary>
@@ -39,6 +48,55 @@ namespace UnnamedStressTesting
         {
             if (!Directory.Exists(DictironaryFolderPath))
                 Directory.CreateDirectory(DictironaryFolderPath);
+        }
+
+        /// <summary>
+        /// Конвертер из числа байт в читаемы размер файла <see href="https://stackoverflow.com/questions/11965662/how-to-parse-size-of-file-to-string"/>
+        /// </summary>
+        /// <param name="i">Размер файла в байтах</param>
+        /// <returns>Читаемый размер файла</returns>
+        public static string GetSizeReadable(long i)
+        {
+            string sign = (i < 0 ? "-" : "");
+            double readable = (i < 0 ? -i : i);
+            string suffix;
+            if (i >= 0x1000000000000000) // Exabyte
+            {
+                suffix = "EB";
+                readable = (double)(i >> 50);
+            }
+            else if (i >= 0x4000000000000) // Petabyte
+            {
+                suffix = "PB";
+                readable = (double)(i >> 40);
+            }
+            else if (i >= 0x10000000000) // Terabyte
+            {
+                suffix = "TB";
+                readable = (double)(i >> 30);
+            }
+            else if (i >= 0x40000000) // Gigabyte
+            {
+                suffix = "GB";
+                readable = (double)(i >> 20);
+            }
+            else if (i >= 0x100000) // Megabyte
+            {
+                suffix = "MB";
+                readable = (double)(i >> 10);
+            }
+            else if (i >= 0x400) // Kilobyte
+            {
+                suffix = "KB";
+                readable = (double)i;
+            }
+            else
+            {
+                return i.ToString(sign + "0 B"); // Byte
+            }
+            readable = readable / 1024;
+
+            return sign + readable.ToString("0.### ") + suffix;
         }
 
         /// <summary>
