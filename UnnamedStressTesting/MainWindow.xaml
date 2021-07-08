@@ -15,17 +15,16 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- TODO: дописать логику скачивания словарей, добавить текст на пустой TreeView, скрыть букву Ё в тестах -->
-        
         <Grid x:Name="leftMenuGrid" Grid.Column="0" Margin="5" Width="{Binding LeftMenuWidth, Mode=OneTime}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-
+            
             <!-- Кнопки -->
             <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
@@ -46,7 +45,13 @@
             </Grid>
 
             <!-- Список элементов -->
-            <TreeView Grid.Row="1"  ItemsSource="{Binding Items}" SelectedItemChanged="WordsTreeView_SelectedItemChanged" Visibility="{Binding IsWordRefresh, Converter={local:BooleanToVisibilityConverter}, ConverterParameter=True}">
+            <TreeView Grid.Row="1" ItemsSource="{Binding Items}" SelectedItemChanged="WordsTreeView_SelectedItemChanged">
+                <TreeView.Visibility>
+                    <MultiBinding Converter="{local:TreeViewVisibilityMultiConverter}">
+                        <Binding Path="IsItemsEmpty"/>
+                        <Binding Path="IsWordRefresh"/>
+                    </MultiBinding>
+                </TreeView.Visibility>
                 <TreeView.Resources>
                     <Style TargetType="{x:Type TreeViewItem}">
                         <Setter Property="IsExpanded" Value="{Binding Items, Converter={local:ItemsToIsExpandedConverter}}"/>
@@ -70,12 +75,38 @@
                     </ControlTemplate>
                 </TreeView.Template>
             </TreeView>
-            
+
             <!-- Значок обновления -->
             <ContentControl Grid.Row="1" Content="{StaticResource RefreshingIcon}" Visibility="{Binding IsWordRefresh, Converter={local:BooleanToVisibilityConverter}}"/>
-        </Grid>
 
-        <Grid Grid.Column="1" Margin="5">
+            <!-- Текст отсутствия слов -->
+            <StackPanel Grid.Row="1" VerticalAlignment="Center" Margin="15" TextBlock.LineHeight="1">
+                <StackPanel.Visibility>
+                    <MultiBinding Converter="{local:EmptyItemsVisibilityMultiConverter}">
+                        <Binding Path="IsItemsEmpty"/>
+                        <Binding Path="IsWordRefresh"/>
+                    </MultiBinding>
+                </StackPanel.Visibility>
+                <Viewbox>
+                    <TextBlock Text="Пусто"/>
+                </Viewbox>
+                <Viewbox>
+                    <TextBlock TextAlignment="Center"><Hyperlink Foreground="DarkSlateGray" Command="{Binding DownloadDictionariesCommand}">Скачайте словари</Hyperlink> или<LineBreak/><Hyperlink Command="{Binding OpenDictionaryFolderCommand}" Foreground="DarkSlateGray">создайте свои</Hyperlink></TextBlock>
+                </Viewbox>
+            </StackPanel>
+        </Grid>
+        
+        <!-- Тень левой боковой панели -->
+        <Border BorderThickness="0 0 4 0" Grid.Column="1">
+            <Border.BorderBrush>
+                <LinearGradientBrush StartPoint="0 0" EndPoint="1 0">
+                    <GradientStop Offset="0" Color="LightGray"/>
+                    <GradientStop Offset="1" Color="Transparent"/>
+                </LinearGradientBrush>
+            </Border.BorderBrush>
+        </Border>
+
+        <Grid Grid.Column="2" Margin="5">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>

@@ -54,10 +54,36 @@ namespace UnnamedStressTesting
             }
         }
 
+        private ObservableCollection<WordViewModel> items;
         /// <summary>
         /// Словори и слова для отображения
         /// </summary>
-        public ObservableCollection<WordViewModel> Items { get; set; }
+        public ObservableCollection<WordViewModel> Items
+        {
+            get => items;
+            set
+            {
+                if (items == value)
+                    return;
+
+                items = value;
+                OnPropertyChanged(nameof(IsItemsEmpty));
+            }
+        }
+
+        /// <summary>
+        /// Показывает, пуст ли список слов
+        /// </summary>
+        public bool IsItemsEmpty
+        {
+            get
+            {
+                if (Items == null)
+                    return true;
+                else
+                    return Items.Count == 0;
+            }
+        }
 
         /// <summary>
         /// Ширина меню выбора слов в пикселях
@@ -282,13 +308,13 @@ namespace UnnamedStressTesting
                 return;
 
             IsWordRefresh = true;
+            SelectedItem = null;
 
             await Task.Run(() =>
             {
                 FileHelpers.UpdateDictionaries();
                 EnabledWords.Clear();
-
-                SelectedItem = null;
+                
                 var items = new ObservableCollection<WordViewModel>();
 
                 foreach (var dict in FileHelpers.WordDictionaries)

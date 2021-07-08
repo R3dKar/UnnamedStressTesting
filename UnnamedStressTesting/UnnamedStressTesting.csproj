@@ -74,6 +74,7 @@
     <Compile Include="Converters\BaseMultiValueConverter.cs" />
     <Compile Include="Converters\BaseValueConverter.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
+    <Compile Include="Converters\EmptyItemsVisibilityMultiConverter.cs" />
     <Compile Include="Converters\HideYoMultiConverter.cs" />
     <Compile Include="Converters\IsPressedIndexSelfMultiConverter.cs" />
     <Compile Include="Converters\ItemsToIsExpandedConverter.cs" />
@@ -82,6 +83,7 @@
     <Compile Include="Converters\MistakeStressVisibilityMultiConverter.cs" />
     <Compile Include="Converters\ReverseBooleanConverter.cs" />
     <Compile Include="Converters\StressVisibilityMultiConverter.cs" />
+    <Compile Include="Converters\TreeViewVisibilityMultiConverter.cs" />
     <Compile Include="DataModels\DownloadPermissionType.cs" />
     <Compile Include="DataModels\WordDictionary.cs" />
     <Compile Include="DataModels\Letter.cs" />
