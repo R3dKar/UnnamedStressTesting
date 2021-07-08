@@ -165,7 +165,10 @@ namespace UnnamedStressTesting
 
                     outText += w.ToString(true) + "\n";
                 }
-                catch (ArgumentException) { }
+                catch (ArgumentException) 
+                {
+                    outText += line + "\n";
+                }
             }
 
             File.WriteAllText(dict.FilePath, outText);

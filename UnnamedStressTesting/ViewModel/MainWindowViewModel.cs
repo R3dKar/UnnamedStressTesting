@@ -70,6 +70,11 @@ namespace UnnamedStressTesting
         public FrameworkElement LeftMenuContainer { get; set; }
 
         /// <summary>
+        /// Показывает, обновляется ли список слов
+        /// </summary>
+        public bool IsWordRefresh { get; set; }
+
+        /// <summary>
         /// Контейнер, содержащий слово справа
         /// </summary>
         public FrameworkElement RightSideWordContainer { get; set; }
@@ -271,22 +276,32 @@ namespace UnnamedStressTesting
         /// <summary>
         /// Обновить список словарей и слов
         /// </summary>
-        private void UpdateDictionaries()
+        private async void UpdateDictionaries()
         {
-            FileHelpers.UpdateDictionaries();
-            EnabledWords.Clear();
+            if (IsWordRefresh)
+                return;
 
-            SelectedItem = null;
-            var items = new ObservableCollection<WordViewModel>();
+            IsWordRefresh = true;
 
-            foreach (var dict in FileHelpers.WordDictionaries)
+            await Task.Run(() =>
             {
-                var group = new WordViewModel(dict);
-                if (group.Items.Count > 0)
-                    items.Add(group);
-            }
+                FileHelpers.UpdateDictionaries();
+                EnabledWords.Clear();
 
-            Items = items;
+                SelectedItem = null;
+                var items = new ObservableCollection<WordViewModel>();
+
+                foreach (var dict in FileHelpers.WordDictionaries)
+                {
+                    var group = new WordViewModel(dict);
+                    if (group.Items.Count > 0)
+                        items.Add(group);
+                }
+
+                Items = items;
+            });
+
+            IsWordRefresh = false;
         }
 
         /// <summary>
@@ -520,6 +535,7 @@ namespace UnnamedStressTesting
 
             DownloadedBytes.Clear();
             BytesToDownload.Clear();
+            UpdateDownloadInfo();
             List<Task<bool>> downloads = new List<Task<bool>>();
 
             foreach (var keypair in FileHelpers.DefaultDictionariesFiles)
@@ -629,7 +645,10 @@ namespace UnnamedStressTesting
             foreach (var entry in DownloadedBytes)
                 downloaded += entry.Value;
 
-            DownloadedPercent = (int)((decimal)downloaded / (decimal)totalBytesToDownload * 100);
+            if (totalBytesToDownload != 0)
+                DownloadedPercent = (int)((decimal)downloaded / (decimal)totalBytesToDownload * 100);
+            else
+                DownloadedPercent = 0;
             DownloadingToolTipInfo = $"Скачано: {FileHelpers.GetSizeReadable(downloaded)} из {FileHelpers.GetSizeReadable(totalBytesToDownload)}\nНажмите для отмены";
         }
 

@@ -7,6 +7,7 @@
     
     <fa5:SvgAwesome x:Key="FolderOpenIcon" Icon="Solid_FolderOpen" Foreground="{StaticResource FolderColorBrush}" Height="16"/>
     <fa5:SvgAwesome x:Key="RefreshIcon" Icon="Solid_RedoAlt" Rotation="270" Foreground="{StaticResource RefreshColorBrush}" Height="16"/>
+    <fa5:SvgAwesome x:Key="RefreshingIcon" Icon="Solid_SyncAlt" Spin="True" SpinDuration="1.5" Foreground="{StaticResource RefreshColorBrush}" Height="32"/>
     <fa5:SvgAwesome x:Key="DownloadIcon" Icon="Solid_FileDownload" Foreground="{StaticResource RefreshColorBrush}" Height="16"/>
     <fa5:SvgAwesome x:Key="StartIcon" Icon="Solid_Play" Foreground="{StaticResource StartColorBrush}" Height="16"/>
     <fa5:SvgAwesome x:Key="StopIcon" Icon="Solid_TimesCircle" Foreground="{StaticResource StopColorBrush}" Height="16"/>

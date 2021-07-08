@@ -46,7 +46,7 @@
             </Grid>
 
             <!-- Список элементов -->
-            <TreeView Grid.Row="1"  ItemsSource="{Binding Items}" SelectedItemChanged="WordsTreeView_SelectedItemChanged">
+            <TreeView Grid.Row="1"  ItemsSource="{Binding Items}" SelectedItemChanged="WordsTreeView_SelectedItemChanged" Visibility="{Binding IsWordRefresh, Converter={local:BooleanToVisibilityConverter}, ConverterParameter=True}">
                 <TreeView.Resources>
                     <Style TargetType="{x:Type TreeViewItem}">
                         <Setter Property="IsExpanded" Value="{Binding Items, Converter={local:ItemsToIsExpandedConverter}}"/>
@@ -70,6 +70,9 @@
                     </ControlTemplate>
                 </TreeView.Template>
             </TreeView>
+            
+            <!-- Значок обновления -->
+            <ContentControl Grid.Row="1" Content="{StaticResource RefreshingIcon}" Visibility="{Binding IsWordRefresh, Converter={local:BooleanToVisibilityConverter}}"/>
         </Grid>
 
         <Grid Grid.Column="1" Margin="5">
