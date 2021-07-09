@@ -40,7 +40,7 @@ namespace UnnamedStressTesting
                 else
                     isPressed = MainWindowViewModel.MainInstance.SelectedItem.Letters.IndexOf(letter) == pressedIndex;
 
-                if ((letter.IsStressed && !isTestStarted) || (isTestStarted && !isWordReveal && isMouseOver && letter.IsVowel) || (isWordReveal && (letter.IsStressed || isPressed) && letter.Uppercase != 'Ё'))
+                if ((letter.IsStressed && !isTestStarted && letter.Uppercase != 'Ё') || (isTestStarted && !isWordReveal && isMouseOver && letter.IsVowel) || (isWordReveal && (letter.IsStressed || isPressed) && letter.Uppercase != 'Ё'))
                     return Visibility.Visible;
                 else
                     return Visibility.Collapsed;

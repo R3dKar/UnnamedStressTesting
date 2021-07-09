@@ -608,8 +608,6 @@ namespace UnnamedStressTesting
         /// <returns>true если задача не отменена</returns>
         private async Task<bool> DownloadFile(string url, string preferedFileName)
         {
-            //url = "http://speedtest.ftp.otenet.gr/files/test1Mb.db"; //debug
-
             if (File.Exists(Path.Combine(FileHelpers.DictironaryFolderPath, $"{preferedFileName}.txt")) && PermissionType == DownloadPermissionType.Rename)
             {
                 int postfix = 1;
