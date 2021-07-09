@@ -21,6 +21,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Словари", "Слов�
 		Словари\Существительные.txt = Словари\Существительные.txt
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Screenshots", "Screenshots", "{750DC1FE-3178-4436-A72B-52DE790B18F7}"
+	ProjectSection(SolutionItems) = preProject
+		Screenshots\screenshot1.png = Screenshots\screenshot1.png
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +42,7 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{6DEA55D5-3FAD-474C-BBAC-5F2C26976E33} = {4509A138-E40D-4018-9C17-3B444F2DB15C}
+		{750DC1FE-3178-4436-A72B-52DE790B18F7} = {4509A138-E40D-4018-9C17-3B444F2DB15C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {40EAFE74-6997-4623-8DC6-2E9DDBB7E79C}
