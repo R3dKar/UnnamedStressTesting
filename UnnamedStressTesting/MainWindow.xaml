@@ -4,10 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UnnamedStressTesting"
-        xmlns:fa5="http://schemas.fontawesome.com/icons/"
-        xmlns:system="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Unnamed Stress Testing" Icon="icon.ico" MinHeight="250" Height="450" MinWidth="500" Width="800">
     <Window.DataContext>
         <local:MainWindowViewModel/>
     </Window.DataContext>
