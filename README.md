@@ -1,23 +1,23 @@
 # Unnamed Stress Testing
 
-Программа, предоставляющая возможность выучить ударения без особой боли для ЕГЭ.
+РџСЂРѕРіСЂР°РјРјР°, РїСЂРµРґРѕСЃС‚Р°РІР»СЏСЋС‰Р°СЏ РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ РІС‹СѓС‡РёС‚СЊ СѓРґР°СЂРµРЅРёСЏ Р±РµР· РѕСЃРѕР±РѕР№ Р±РѕР»Рё РґР»СЏ Р•Р“Р­.
 
-Написано на C#, используя __WPF__ и паттерн проектирования __MVVM__.
+РќР°РїРёСЃР°РЅРѕ РЅР° C#, РёСЃРїРѕР»СЊР·СѓСЏ __WPF__ Рё РїР°С‚С‚РµСЂРЅ РїСЂРѕРµРєС‚РёСЂРѕРІР°РЅРёСЏ __MVVM__.
 
-![Скриншот](https://raw.githubusercontent.com/R3dKar/UnnamedStressTesting/master/Screenshots/screenshot1.png)
+![РЎРєСЂРёРЅС€РѕС‚](https://raw.githubusercontent.com/R3dKar/UnnamedStressTesting/master/Screenshots/screenshot1.png)
 
-<!--## Установка
+<!--## РЈСЃС‚Р°РЅРѕРІРєР°
 
 Windows:
 
-## Использование
+## РСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ
 
 -->
-## Лицензия
+## Р›РёС†РµРЅР·РёСЏ
 
-Распространяется под лицензией _GNU General Public License v3.0_ (смотри файл ``LICENSE``)
+Р Р°СЃРїСЂРѕСЃС‚СЂР°РЅСЏРµС‚СЃСЏ РїРѕРґ Р»РёС†РµРЅР·РёРµР№ _GNU General Public License v3.0_ (СЃРјРѕС‚СЂРё С„Р°Р№Р» ``LICENSE``)
 
-## Использованные библиотеки
+## РСЃРїРѕР»СЊР·РѕРІР°РЅРЅС‹Рµ Р±РёР±Р»РёРѕС‚РµРєРё
 * [FontAwesome5 WPF](https://github.com/MartinTopfstedt/FontAwesome5)
 * [Fody PropertyChanged](https://github.com/Fody/PropertyChanged)
 * [WPF Task Dialog Wrapper](https://github.com/yadyn/WPF-Task-Dialog)
