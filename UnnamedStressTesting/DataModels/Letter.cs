@@ -5,7 +5,7 @@ namespace UnnamedStressTesting
     /// <summary>
     /// Тип для буквы
     /// </summary>
-    public class Letter
+    public struct Letter
     {
         #region Статические члены
 
