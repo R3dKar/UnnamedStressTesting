@@ -257,7 +257,7 @@ namespace UnnamedStressTesting
             RefreshWordCommand = new RelayCommand(UpdateDictionaries);
             StartTestingCommand = new RelayCommand(StartTesting);
             StopTestingCommand = new RelayCommand(StopTesting);
-            DownloadDictionariesCommand = new RelayCommand(DownloadDictionaries);
+            DownloadDictionariesCommand = new ParametrizedRelayCommand(DownloadDictionaries);
 
             SaveDictionariesOnClose = new EventHandler((s, e) => FileHelpers.SaveDictionaries());
             UpdateOnEnabledWordsChanged = new NotifyCollectionChangedEventHandler((s, e) => OnPropertyChanged(nameof(IsEnabledWordEmpty)));
@@ -531,11 +531,12 @@ namespace UnnamedStressTesting
         /// <summary>
         /// Скачивает словари асинхронно
         /// </summary>
-        private async void DownloadDictionaries()
+        private async void DownloadDictionaries(object allowCancelling)
         {
             if (IsDownloading)
             {
-                downloadTokenSource.Cancel();
+                if (bool.Parse((string)allowCancelling))
+                    downloadTokenSource.Cancel();
                 return;
             }
 
@@ -617,24 +618,20 @@ namespace UnnamedStressTesting
                 preferedFileName += $" {postfix}";
             }
 
+            long fileSize = await FileHelpers.GetFileSize(url);
+            if (fileSize == 0)
+                return false;
+
+            DownloadedBytes.Add(preferedFileName, 0);
+            BytesToDownload.Add(preferedFileName, fileSize);
+
             using (WebClient web = new WebClient())
             {
                 web.DownloadProgressChanged += (s, e) =>
                 {
-                    if (!DownloadedBytes.ContainsKey(preferedFileName))
-                    {
-                        DownloadedBytes.Add(preferedFileName, 0);
-                        BytesToDownload.Add(preferedFileName, e.TotalBytesToReceive);
-                    }
-
                     DownloadedBytes[preferedFileName] = e.BytesReceived;
 
                     UpdateDownloadInfo();
-                };
-                web.DownloadFileCompleted += (s, e) =>
-                {
-                    if (e.Cancelled)
-                        return;
                 };
                 Task downloadingTask = web.DownloadFileTaskAsync(url, Path.Combine(FileHelpers.DictironaryFolderPath, $"{preferedFileName}.txt"));
 
@@ -650,10 +647,7 @@ namespace UnnamedStressTesting
                 }
             }
 
-            if (BytesToDownload[preferedFileName] == 0)
-                return false;
-            else
-                return true;
+            return true;
         }
 
         /// <summary>

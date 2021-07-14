@@ -3,6 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace UnnamedStressTesting
 {
@@ -110,6 +111,28 @@ namespace UnnamedStressTesting
         }
 
         /// <summary>
+        /// Получает размер файла, не скачивая его <see href="https://stackoverflow.com/questions/122853/how-to-get-the-file-size-from-http-headers"/>
+        /// </summary>
+        /// <param name="url">Ссылка на файл</param>
+        /// <returns>Размер файла в байтах</returns>
+        public static async Task<long> GetFileSize(string url)
+        {
+            long result = -1;
+
+            System.Net.WebRequest req = System.Net.WebRequest.Create(url);
+            req.Method = "HEAD";
+            using (System.Net.WebResponse resp = await req.GetResponseAsync())
+            {
+                if (long.TryParse(resp.Headers.Get("Content-Length"), out long ContentLength))
+                {
+                    result = ContentLength;
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// Получает список слов из файла
         /// </summary>
         /// <param name="dictionary">Путь к файлу</param>
@@ -179,14 +202,18 @@ namespace UnnamedStressTesting
         /// </summary>
         public static void SaveDictionaries()
         {
-            foreach (var dict in WordDictionaries)
+            try
             {
-                try
+                foreach (var dict in WordDictionaries)
                 {
-                    UpdateDictionary(dict);
+                    try
+                    {
+                        UpdateDictionary(dict);
+                    }
+                    catch { }
                 }
-                catch { }
             }
+            catch (InvalidOperationException) { }
         }
 
         #endregion
