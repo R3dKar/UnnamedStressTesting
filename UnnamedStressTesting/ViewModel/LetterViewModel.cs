@@ -69,6 +69,10 @@ namespace UnnamedStressTesting
             LetterCommand = new RelayCommand(RevealWord);
         }
 
+        #endregion
+
+        #region Вспомогательные методы
+
         /// <summary>
         /// Раскрывает слово
         /// </summary>

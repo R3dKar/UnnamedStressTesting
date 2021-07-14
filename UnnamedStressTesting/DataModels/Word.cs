@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace UnnamedStressTesting
 {
@@ -8,6 +9,15 @@ namespace UnnamedStressTesting
     /// </summary>
     public class Word
     {
+        #region Статические члены
+        
+        /// <summary>
+        /// Regex выражение для парсинга слова из строки
+        /// </summary>
+        public static readonly Regex WordPattern = new Regex(@"(?<precontext>[а-я\s]*\s)?(?<word>[а-я]*[АОУЫЭИЕЁЮЯ][а-я]*)(?<postcontext>\s[а-я\s]*)?(?<include>[+-])?(\s*(;|//|#)?\s*(?<comment>\S.*))?");
+
+        #endregion
+
         #region Открытые свойства
 
         /// <summary>
@@ -30,6 +40,15 @@ namespace UnnamedStressTesting
         /// </summary>
         public string Comment { get; set; } = null;
 
+        /// <summary>
+        /// Контекст перед проверяемым словом
+        /// </summary>
+        public string PreContext { get; set; }
+        /// <summary>
+        /// Контекст после проверяемого слова
+        /// </summary>
+        public string PostContext { get; set; }
+
         #endregion
 
         #region Конструкторы
@@ -41,63 +60,44 @@ namespace UnnamedStressTesting
         /// <exception cref="ArgumentException"/>
         public Word(string word)
         {
-            var parts = word.Split(' ');
+            // контекст слОво контекст [+/-] ;коментарии многословные
+            // + - слово включено
+            // - - слово отключено
+            // после ';', '//', '#' коментарий к слову
 
-            foreach (var part in parts)
+            Match parsed = WordPattern.Match(word);
+
+            if (parsed.Success)
             {
-                // слОво <+/-> коментарии многословные
-                // + - слово включено
-                // - - слово отключено
-                // после слова коментарии
-                switch (part)
+                if (parsed.Groups["precontext"].Success && !string.IsNullOrWhiteSpace(parsed.Groups["precontext"].Value))
+                    PreContext = Regex.Replace(parsed.Groups["precontext"].Value.TrimStart(), @"\s+", " ");
+
+                if (parsed.Groups["postcontext"].Success && !string.IsNullOrWhiteSpace(parsed.Groups["postcontext"].Value))
+                    PostContext = Regex.Replace(parsed.Groups["postcontext"].Value.TrimEnd(), @"\s+", " ");
+
+                if (parsed.Groups["include"].Success)
+                    Enabled = parsed.Groups["include"].Value == "+" ? true : false;
+
+                if (parsed.Groups["comment"].Success)
+                    Comment = parsed.Groups["comment"].Value.TrimEnd();
+
+                Letters = new List<Letter>(parsed.Groups["word"].Value.Length);
+                foreach (char ch in parsed.Groups["word"].Value)
                 {
-                    case "+":
-                        if (!string.IsNullOrEmpty(Comment))
-                            Comment += " +";
-                        else
-                            Enabled = true;
-                        break;
-                    case "-":
-                        if (!string.IsNullOrEmpty(Comment))
-                            Comment += " -";
-                        else
-                            Enabled = false;
-                        break;
-                    default:
-                        if (Letters != null)
-                        {
-                            if (Comment is null)
-                                Comment = part;
-                            else
-                                Comment += " " + part;
-                            break;
-                        }
+                    Letter letter = new Letter()
+                    {
+                        Character = ch,
+                        IsStressed = char.IsUpper(ch)
+                    };
 
-                        Letters = new List<Letter>(parts[0].Length);
+                    if (letter.IsStressed)
+                        StressIndex = Letters.Count;
 
-                        foreach (char ch in parts[0])
-                        {
-                            var letter = new Letter
-                            {
-                                Character = ch,
-                                IsStressed = char.IsUpper(ch)
-                            };
-
-                            if (letter.IsStressed && StressIndex == -1)
-                                StressIndex = Letters.Count - 1;
-                            else if (letter.IsStressed && StressIndex >= 0)
-                                throw new ArgumentException("Число ударений в слове больше одного", nameof(word));
-
-                            Letters.Add(letter);
-                        }
-                        break;
+                    Letters.Add(letter);
                 }
             }
-
-            if (Letters is null)
-                throw new ArgumentException("Строка представлена модификаторами без слова", nameof(word));
-            if (StressIndex == -1)
-                throw new ArgumentException("Слово без ударения", nameof(word));
+            else
+                throw new ArgumentException("Ударений нет или их несколько", nameof(word));
         }
 
         #endregion
@@ -111,19 +111,21 @@ namespace UnnamedStressTesting
         /// <returns>Строка типа <see cref="string"/></returns>
         public string ToString(bool serialize)
         {
-            string word = string.Empty;
+            string word = PreContext;
 
             foreach (var letter in Letters)
             {
-                word += letter.Character;
+                word += letter.IsStressed ? char.ToUpper(letter.Character) : char.ToLower(letter.Character);
             }
+
+            word += PostContext;
 
             if (serialize)
             {
                 word += " " + (Enabled ? "+" : "-");
 
                 if (Comment != null)
-                    word += ' ' + Comment;
+                    word += $" ;{Comment}";
             }
 
             return word;

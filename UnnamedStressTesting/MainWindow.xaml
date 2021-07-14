@@ -22,7 +22,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            
+
             <!-- Кнопки -->
             <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
@@ -93,7 +93,7 @@
                 </Viewbox>
             </StackPanel>
         </Grid>
-        
+
         <!-- Тень левой боковой панели -->
         <Border BorderThickness="0 0 4 0" Grid.Column="1">
             <Border.BorderBrush>
@@ -112,194 +112,203 @@
 
             <!-- Слово -->
             <Viewbox x:Name="rightSideWord" Grid.Row="0">
-                <ItemsControl ItemsSource="{Binding SelectedItem.Letters}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal"/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Grid>
-                                <Button Command="{Binding LetterCommand}">
-                                    <Button.Content>
-                                        <MultiBinding Converter="{local:HideYoMultiConverter}">
-                                            <Binding Path="UppercaseString"/>
-                                            <Binding Path="DataContext.IsTestStarted" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}"/>
-                                            <Binding Path="DataContext.IsWordReveal" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}"/>
-                                        </MultiBinding>
-                                    </Button.Content>
-                                    <Button.Template>
-                                        <ControlTemplate TargetType="{x:Type Button}">
-                                            <Grid>
-                                                <!-- Текст с буквой -->
-                                                <TextBlock Text="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}"/>
+                <StackPanel Orientation="Horizontal">
+                    <!-- Контекст перед словом -->
+                    <TextBlock Text="{Binding SelectedItem.PreContext}"/>
 
-                                                <!-- Черта ударения -->
-                                                <TextBlock Name="stressMarker" Margin="0 -4 0 4" Foreground="{TemplateBinding Foreground}" HorizontalAlignment="Center" VerticalAlignment="Top" Text="′">
-                                                    <TextBlock.Visibility>
-                                                        <MultiBinding Converter="{local:StressVisibilityMultiConverter}">
-                                                            <Binding Path="IsMouseOver" RelativeSource="{RelativeSource TemplatedParent}"/>
-                                                            <Binding Path="DataContext.IsTestStarted" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}"/>
-                                                            <Binding Path="DataContext.IsWordReveal" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}"/>
-                                                            <Binding Path="DataContext.PressedIndex" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}"/>
-                                                            <Binding/>
-                                                        </MultiBinding>
-                                                    </TextBlock.Visibility>
-                                                    <TextBlock.RenderTransform>
-                                                        <TransformGroup>
-                                                            <TranslateTransform X="3"/>
-                                                            <RotateTransform Angle="20"/>
-                                                        </TransformGroup>
-                                                    </TextBlock.RenderTransform>
-                                                </TextBlock>
-                                                <!-- Черта, зачёркивающая ударение -->
-                                                <TextBlock Name="incorrectStress" Margin="-3.8 2.3 3.8 -2.3" Foreground="{TemplateBinding Foreground}" HorizontalAlignment="Center" VerticalAlignment="Top" FontWeight="UltraLight" Text="′">
-                                                    <TextBlock.Visibility>
-                                                        <MultiBinding Converter="{local:MistakeStressVisibilityMultiConverter}">
-                                                            <Binding Path="DataContext.IsWordReveal" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}"/>
-                                                            <Binding Path="DataContext.PressedIndex" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}"/>
-                                                            <Binding/>
-                                                        </MultiBinding>
-                                                    </TextBlock.Visibility>
-                                                    <TextBlock.RenderTransform>
-                                                        <RotateTransform Angle="290"/>
-                                                    </TextBlock.RenderTransform>
-                                                </TextBlock>
-                                            </Grid>
-                                            <ControlTemplate.Triggers>
-                                                <!-- Анимация всплываеющего ударения при наведении -->
-                                                <MultiDataTrigger>
-                                                    <MultiDataTrigger.Conditions>
-                                                        <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource TemplatedParent}}" Value="True"/>
-                                                        <Condition Binding="{Binding DataContext.IsTestStarted, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Value="True"/>
-                                                        <Condition Binding="{Binding DataContext.IsWordReveal, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Value="False"/>
-                                                    </MultiDataTrigger.Conditions>
-                                                    <MultiDataTrigger.EnterActions>
-                                                        <BeginStoryboard>
-                                                            <Storyboard>
-                                                                <DoubleAnimation Storyboard.TargetName="stressMarker" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3" DecelerationRatio="0.9"/>
-                                                                <ThicknessAnimation Storyboard.TargetName="stressMarker" Storyboard.TargetProperty="Margin" From="0" To="0 -4 0 4" Duration="0:0:0.1" DecelerationRatio="0.9"/>
-                                                            </Storyboard>
-                                                        </BeginStoryboard>
-                                                    </MultiDataTrigger.EnterActions>
-                                                </MultiDataTrigger>
-                                                <!-- Анимация зачёркивания ударения и покраснения неправильной буквы-->
-                                                <MultiDataTrigger>
-                                                    <MultiDataTrigger.Conditions>
-                                                        <Condition Binding="{Binding IsStressed}" Value="False"/>
-                                                        <Condition Binding="{Binding DataContext.IsWordReveal, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Value="True"/>
-                                                        <Condition Value="True">
-                                                            <Condition.Binding>
-                                                                <MultiBinding Converter="{local:IsPressedIndexSelfMultiConverter}">
-                                                                    <Binding Path="DataContext.PressedIndex" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}"/>
-                                                                    <Binding/>
-                                                                </MultiBinding>
-                                                            </Condition.Binding>
-                                                        </Condition>
-                                                    </MultiDataTrigger.Conditions>
-                                                    <MultiDataTrigger.EnterActions>
-                                                        <BeginStoryboard>
-                                                            <Storyboard>
-                                                                <ColorAnimation Storyboard.TargetProperty="Foreground.Color" To="{StaticResource IncorrectLetterColor}" Duration="0:0:0.2" DecelerationRatio="0.9"/>
-                                                                <DoubleAnimation Storyboard.TargetName="incorrectStress" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3" DecelerationRatio="0.9"/>
-                                                                <ThicknessAnimation Storyboard.TargetName="incorrectStress" Storyboard.TargetProperty="Margin" From="-8 0.7 8 -0.7" To="-3.8 2.3 3.8 -2.3" Duration="0:0:0.3" DecelerationRatio="0.9"/>
-                                                            </Storyboard>
-                                                        </BeginStoryboard>
-                                                    </MultiDataTrigger.EnterActions>
-                                                </MultiDataTrigger>
-                                                <!-- Позеленение правильной буквы, если она выбрана -->
-                                                <MultiDataTrigger>
-                                                    <MultiDataTrigger.Conditions>
-                                                        <Condition Binding="{Binding DataContext.IsWordReveal, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Value="True"/>
-                                                        <Condition Binding="{Binding IsStressed}" Value="True"/>
-                                                        <Condition Value="True">
-                                                            <Condition.Binding>
-                                                                <MultiBinding Converter="{local:IsPressedIndexSelfMultiConverter}">
-                                                                    <Binding Path="DataContext.PressedIndex" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}"/>
-                                                                    <Binding/>
-                                                                </MultiBinding>
-                                                            </Condition.Binding>
-                                                        </Condition>
-                                                    </MultiDataTrigger.Conditions>
-                                                    <MultiDataTrigger.EnterActions>
-                                                        <BeginStoryboard>
-                                                            <Storyboard>
-                                                                <ColorAnimation Storyboard.TargetProperty="Foreground.Color" To="{StaticResource CorrectLetterColor}" Duration="0:0:0.2" DecelerationRatio="0.9"/>
-                                                            </Storyboard>
-                                                        </BeginStoryboard>
-                                                    </MultiDataTrigger.EnterActions>
-                                                </MultiDataTrigger>
-                                                <!-- Анимация ударения и позеленение, если выбрана неправильная буква-->
-                                                <MultiDataTrigger>
-                                                    <MultiDataTrigger.Conditions>
-                                                        <Condition Binding="{Binding IsStressed}" Value="True"/>
-                                                        <Condition Binding="{Binding DataContext.IsWordReveal, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Value="True"/>
-                                                        <Condition Value="False">
-                                                            <Condition.Binding>
-                                                                <MultiBinding Converter="{local:IsPressedIndexSelfMultiConverter}">
-                                                                    <Binding Path="DataContext.PressedIndex" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}"/>
-                                                                    <Binding/>
-                                                                </MultiBinding>
-                                                            </Condition.Binding>
-                                                        </Condition>
-                                                    </MultiDataTrigger.Conditions>
-                                                    <MultiDataTrigger.EnterActions>
-                                                        <BeginStoryboard>
-                                                            <Storyboard>
-                                                                <ColorAnimation Storyboard.TargetProperty="Foreground.Color" To="{StaticResource CorrectLetterColor}" Duration="0:0:0.2" DecelerationRatio="0.9"/>
-                                                                <DoubleAnimation Storyboard.TargetName="stressMarker" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3" DecelerationRatio="0.9"/>
-                                                                <ThicknessAnimation Storyboard.TargetName="stressMarker" Storyboard.TargetProperty="Margin" From="0" To="0 -4 0 4" Duration="0:0:0.1" DecelerationRatio="0.9"/>
-                                                            </Storyboard>
-                                                        </BeginStoryboard>
-                                                    </MultiDataTrigger.EnterActions>
-                                                </MultiDataTrigger>
-                                                <!-- Возвращает всё на место после теста или вопроса -->
-                                                <DataTrigger Binding="{Binding DataContext.IsWordReveal, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Value="False">
-                                                    <Setter Property="Foreground">
-                                                        <Setter.Value>
-                                                            <SolidColorBrush>
-                                                                <SolidColorBrush.Color>
-                                                                    <MultiBinding Converter="{local:LetterForegroundMultiConverter}">
+                    <!-- Проверяемое слово -->
+                    <ItemsControl ItemsSource="{Binding SelectedItem.Letters}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Button Command="{Binding LetterCommand}">
+                                        <Button.Content>
+                                            <MultiBinding Converter="{local:HideYoMultiConverter}">
+                                                <Binding Path="UppercaseString"/>
+                                                <Binding Path="DataContext.IsTestStarted" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}"/>
+                                                <Binding Path="DataContext.IsWordReveal" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}"/>
+                                            </MultiBinding>
+                                        </Button.Content>
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="{x:Type Button}">
+                                                <Grid>
+                                                    <!-- Текст с буквой -->
+                                                    <TextBlock Text="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}"/>
+
+                                                    <!-- Черта ударения -->
+                                                    <TextBlock Name="stressMarker" Margin="0 -4 0 4" Foreground="{TemplateBinding Foreground}" HorizontalAlignment="Center" VerticalAlignment="Top" Text="′">
+                                                        <TextBlock.Visibility>
+                                                            <MultiBinding Converter="{local:StressVisibilityMultiConverter}">
+                                                                <Binding Path="IsMouseOver" RelativeSource="{RelativeSource TemplatedParent}"/>
+                                                                <Binding Path="DataContext.IsTestStarted" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}"/>
+                                                                <Binding Path="DataContext.IsWordReveal" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}"/>
+                                                                <Binding Path="DataContext.PressedIndex" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}"/>
+                                                                <Binding/>
+                                                            </MultiBinding>
+                                                        </TextBlock.Visibility>
+                                                        <TextBlock.RenderTransform>
+                                                            <TransformGroup>
+                                                                <TranslateTransform X="3"/>
+                                                                <RotateTransform Angle="20"/>
+                                                            </TransformGroup>
+                                                        </TextBlock.RenderTransform>
+                                                    </TextBlock>
+                                                    <!-- Черта, зачёркивающая ударение -->
+                                                    <TextBlock Name="incorrectStress" Margin="-3.8 2.3 3.8 -2.3" Foreground="{TemplateBinding Foreground}" HorizontalAlignment="Center" VerticalAlignment="Top" FontWeight="UltraLight" Text="′">
+                                                        <TextBlock.Visibility>
+                                                            <MultiBinding Converter="{local:MistakeStressVisibilityMultiConverter}">
+                                                                <Binding Path="DataContext.IsWordReveal" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}"/>
+                                                                <Binding Path="DataContext.PressedIndex" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}"/>
+                                                                <Binding/>
+                                                            </MultiBinding>
+                                                        </TextBlock.Visibility>
+                                                        <TextBlock.RenderTransform>
+                                                            <RotateTransform Angle="290"/>
+                                                        </TextBlock.RenderTransform>
+                                                    </TextBlock>
+                                                </Grid>
+                                                <ControlTemplate.Triggers>
+                                                    <!-- Анимация всплываеющего ударения при наведении -->
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource TemplatedParent}}" Value="True"/>
+                                                            <Condition Binding="{Binding DataContext.IsTestStarted, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Value="True"/>
+                                                            <Condition Binding="{Binding DataContext.IsWordReveal, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Value="False"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <MultiDataTrigger.EnterActions>
+                                                            <BeginStoryboard>
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Storyboard.TargetName="stressMarker" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3" DecelerationRatio="0.9"/>
+                                                                    <ThicknessAnimation Storyboard.TargetName="stressMarker" Storyboard.TargetProperty="Margin" From="0" To="0 -4 0 4" Duration="0:0:0.1" DecelerationRatio="0.9"/>
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </MultiDataTrigger.EnterActions>
+                                                    </MultiDataTrigger>
+                                                    <!-- Анимация зачёркивания ударения и покраснения неправильной буквы-->
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding IsStressed}" Value="False"/>
+                                                            <Condition Binding="{Binding DataContext.IsWordReveal, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Value="True"/>
+                                                            <Condition Value="True">
+                                                                <Condition.Binding>
+                                                                    <MultiBinding Converter="{local:IsPressedIndexSelfMultiConverter}">
+                                                                        <Binding Path="DataContext.PressedIndex" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}"/>
                                                                         <Binding/>
-                                                                        <Binding Path="DataContext.IsTestStarted" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type local:MainWindow}}"/>
                                                                     </MultiBinding>
-                                                                </SolidColorBrush.Color>
-                                                            </SolidColorBrush>
-                                                        </Setter.Value>
-                                                    </Setter>
-                                                </DataTrigger>
-                                                <!-- Показывает подсказку -->
-                                                <MultiDataTrigger>
-                                                    <MultiDataTrigger.Conditions>
-                                                        <Condition Binding="{Binding IsStressed}" Value="True"/>
-                                                        <Condition Binding="{Binding DataContext.ShowNextQuestionHint, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Value="True"/>
-                                                    </MultiDataTrigger.Conditions>
-                                                    <MultiDataTrigger.EnterActions>
-                                                        <BeginStoryboard>
-                                                            <Storyboard AutoReverse="True">
-                                                                <ColorAnimation Storyboard.TargetProperty="Foreground.Color" To="Black" Duration="0:0:0.3" DecelerationRatio="0.9"/>
-                                                            </Storyboard>
-                                                        </BeginStoryboard>
-                                                    </MultiDataTrigger.EnterActions>
-                                                </MultiDataTrigger>
-                                            </ControlTemplate.Triggers>
-                                        </ControlTemplate>
-                                    </Button.Template>
+                                                                </Condition.Binding>
+                                                            </Condition>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <MultiDataTrigger.EnterActions>
+                                                            <BeginStoryboard>
+                                                                <Storyboard>
+                                                                    <ColorAnimation Storyboard.TargetProperty="Foreground.Color" To="{StaticResource IncorrectLetterColor}" Duration="0:0:0.2" DecelerationRatio="0.9"/>
+                                                                    <DoubleAnimation Storyboard.TargetName="incorrectStress" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3" DecelerationRatio="0.9"/>
+                                                                    <ThicknessAnimation Storyboard.TargetName="incorrectStress" Storyboard.TargetProperty="Margin" From="-8 0.7 8 -0.7" To="-3.8 2.3 3.8 -2.3" Duration="0:0:0.3" DecelerationRatio="0.9"/>
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </MultiDataTrigger.EnterActions>
+                                                    </MultiDataTrigger>
+                                                    <!-- Позеленение правильной буквы, если она выбрана -->
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding DataContext.IsWordReveal, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Value="True"/>
+                                                            <Condition Binding="{Binding IsStressed}" Value="True"/>
+                                                            <Condition Value="True">
+                                                                <Condition.Binding>
+                                                                    <MultiBinding Converter="{local:IsPressedIndexSelfMultiConverter}">
+                                                                        <Binding Path="DataContext.PressedIndex" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}"/>
+                                                                        <Binding/>
+                                                                    </MultiBinding>
+                                                                </Condition.Binding>
+                                                            </Condition>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <MultiDataTrigger.EnterActions>
+                                                            <BeginStoryboard>
+                                                                <Storyboard>
+                                                                    <ColorAnimation Storyboard.TargetProperty="Foreground.Color" To="{StaticResource CorrectLetterColor}" Duration="0:0:0.2" DecelerationRatio="0.9"/>
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </MultiDataTrigger.EnterActions>
+                                                    </MultiDataTrigger>
+                                                    <!-- Анимация ударения и позеленение, если выбрана неправильная буква-->
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding IsStressed}" Value="True"/>
+                                                            <Condition Binding="{Binding DataContext.IsWordReveal, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Value="True"/>
+                                                            <Condition Value="False">
+                                                                <Condition.Binding>
+                                                                    <MultiBinding Converter="{local:IsPressedIndexSelfMultiConverter}">
+                                                                        <Binding Path="DataContext.PressedIndex" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}"/>
+                                                                        <Binding/>
+                                                                    </MultiBinding>
+                                                                </Condition.Binding>
+                                                            </Condition>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <MultiDataTrigger.EnterActions>
+                                                            <BeginStoryboard>
+                                                                <Storyboard>
+                                                                    <ColorAnimation Storyboard.TargetProperty="Foreground.Color" To="{StaticResource CorrectLetterColor}" Duration="0:0:0.2" DecelerationRatio="0.9"/>
+                                                                    <DoubleAnimation Storyboard.TargetName="stressMarker" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3" DecelerationRatio="0.9"/>
+                                                                    <ThicknessAnimation Storyboard.TargetName="stressMarker" Storyboard.TargetProperty="Margin" From="0" To="0 -4 0 4" Duration="0:0:0.1" DecelerationRatio="0.9"/>
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </MultiDataTrigger.EnterActions>
+                                                    </MultiDataTrigger>
+                                                    <!-- Возвращает всё на место после теста или вопроса -->
+                                                    <DataTrigger Binding="{Binding DataContext.IsWordReveal, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Value="False">
+                                                        <Setter Property="Foreground">
+                                                            <Setter.Value>
+                                                                <SolidColorBrush>
+                                                                    <SolidColorBrush.Color>
+                                                                        <MultiBinding Converter="{local:LetterForegroundMultiConverter}">
+                                                                            <Binding/>
+                                                                            <Binding Path="DataContext.IsTestStarted" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type local:MainWindow}}"/>
+                                                                        </MultiBinding>
+                                                                    </SolidColorBrush.Color>
+                                                                </SolidColorBrush>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </DataTrigger>
+                                                    <!-- Показывает подсказку -->
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding IsStressed}" Value="True"/>
+                                                            <Condition Binding="{Binding DataContext.ShowNextQuestionHint, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Value="True"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <MultiDataTrigger.EnterActions>
+                                                            <BeginStoryboard>
+                                                                <Storyboard AutoReverse="True">
+                                                                    <ColorAnimation Storyboard.TargetProperty="Foreground.Color" To="Black" Duration="0:0:0.3" DecelerationRatio="0.9"/>
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </MultiDataTrigger.EnterActions>
+                                                    </MultiDataTrigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Button.Template>
 
-                                    <!-- Cursor буквы -->
-                                    <Button.Cursor>
-                                        <MultiBinding Converter="{local:LetterCursorMultiConverter}">
-                                            <Binding/>
-                                            <Binding Path="DataContext.IsTestStarted" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}"/>
-                                            <Binding Path="DataContext.IsWordReveal" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}"/>
-                                        </MultiBinding>
-                                    </Button.Cursor>
-                                </Button>
-                            </Grid>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                                        <!-- Cursor буквы -->
+                                        <Button.Cursor>
+                                            <MultiBinding Converter="{local:LetterCursorMultiConverter}">
+                                                <Binding/>
+                                                <Binding Path="DataContext.IsTestStarted" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}"/>
+                                                <Binding Path="DataContext.IsWordReveal" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}"/>
+                                            </MultiBinding>
+                                        </Button.Cursor>
+                                    </Button>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    
+                    <!-- Контекст после слова -->
+                    <TextBlock Text="{Binding SelectedItem.PostContext}"/>
+                </StackPanel>
             </Viewbox>
 
             <!-- Кнопка запуска теста -->

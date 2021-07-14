@@ -26,6 +26,15 @@ namespace UnnamedStressTesting
         public int StressIndex { get => Word.StressIndex; }
 
         /// <summary>
+        /// Контекст перед проверяемым словом
+        /// </summary>
+        public string PreContext { get => Word.PreContext; }
+        /// <summary>
+        /// Контекст после проверяемого слова
+        /// </summary>
+        public string PostContext { get => Word.PostContext; }
+
+        /// <summary>
         /// Коментарий к слову
         /// </summary>
         public string Comment { get => IsTreeViewGroup ? null : Word.Comment; }
@@ -73,13 +82,7 @@ namespace UnnamedStressTesting
                 if (IsTreeViewGroup)
                     return preview;
 
-                string p = string.Empty;
-                foreach (var letter in Letters)
-                {
-                    p += letter.IsStressed ? letter.Uppercase : letter.Lowercase;
-                }
-
-                return p;
+                return Word.ToString(false);
             }
             set
             {
